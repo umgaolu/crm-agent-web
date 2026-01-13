@@ -8,7 +8,7 @@ const nextConfig = {
     "rc-table",
     "rc-tree",
     "rc-pagination",
-    "rc-inputs"
+    "rc-input"
   ]
 };
 
