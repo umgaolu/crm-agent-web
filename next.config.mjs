@@ -6,7 +6,8 @@ const nextConfig = {
     "rc-util",
     "rc-picker",
     "rc-table",
-    "rc-tree"
+    "rc-tree",
+    "rc-pagination"
   ]
 };
 
