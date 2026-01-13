@@ -1,0 +1,4646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>CRM系统</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: "Source Han Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #1f1f1f;
+}
+.ai-drawer-open {
+  overflow: hidden;
+}
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+.sider {
+  width: 220px;
+  background-color: #001529;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.sider-logo {
+  height: 64px;
+  margin: 16px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+.menu {
+  list-style: none;
+  padding: 8px 0;
+}
+.menu-item {
+  padding: 10px 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.65);
+  transition: background-color 0.2s, color 0.2s;
+}
+.menu-item span.icon {
+  display: inline-block;
+  width: 18px;
+  margin-right: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+.menu-item span.icon svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  vertical-align: middle;
+}
+.menu-item:hover {
+  background-color: #112a45;
+  color: #fff;
+}
+.menu-item.active {
+  background-color: #1677ff;
+  color: #fff;
+}
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.header {
+  height: 56px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.content {
+  padding: 24px;
+  background-color: #f5f7fa;
+  position: relative;
+}
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px 20px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+.dashboard-cards-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.dashboard-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 120px;
+}
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+.dashboard-card-title {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.dashboard-card-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.dashboard-card-sub {
+  font-size: 14px;
+  color: #666;
+}
+.dashboard-card-sub span.value-up {
+  color: #52c41a;
+  font-weight: 600;
+}
+.dashboard-card-sub span.value-down {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+.dashboard-progress-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+.dashboard-progress-bar {
+  position: relative;
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background-color: #f0f0f0;
+  overflow: hidden;
+}
+.dashboard-progress-inner {
+  height: 100%;
+  background-color: #1677ff;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.dashboard-progress-percent {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  white-space: nowrap;
+}
+.dashboard-progress-detail {
+  font-size: 13px;
+  color: #666;
+}
+.dashboard-chart-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px 18px 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.dashboard-chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.dashboard-chart-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+.dashboard-chart-tabs {
+  display: inline-flex;
+  border-bottom: 1px solid #f0f0f0;
+}
+.dashboard-chart-tab {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  position: relative;
+  transition: color 0.2s ease;
+}
+.dashboard-chart-tab.active {
+  color: #1677ff;
+  font-weight: 600;
+}
+.dashboard-chart-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background-color: #1677ff;
+}
+.dashboard-chart-body {
+  position: relative;
+  width: 100%;
+  height: 300px;
+}
+.dashboard-chart-canvas {
+  width: 100%;
+  height: 100%;
+}
+.dashboard-chart-tooltip {
+  position: absolute;
+  min-width: 120px;
+  max-width: 220px;
+  padding: 6px 8px;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 12px;
+  border-radius: 4px;
+  pointer-events: none;
+  transform: translate(-50%, -120%);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  white-space: nowrap;
+}
+.dashboard-chart-tooltip.visible {
+  opacity: 1;
+}
+.dashboard-chart-tooltip-line {
+  margin-bottom: 2px;
+}
+.dashboard-extra-charts-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+.dashboard-extra-chart-card {
+  flex: 1;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+}
+.dashboard-extra-chart-header {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.dashboard-extra-chart-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+.dashboard-extra-chart-body {
+  position: relative;
+  flex: 1;
+}
+.dashboard-extra-chart-canvas {
+  width: 100%;
+  height: 100%;
+}
+.dashboard-extra-chart-tooltip {
+  position: absolute;
+  padding: 6px 8px;
+  background-color: #fff;
+  color: #333;
+  font-size: 12px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -120%);
+  transition: opacity 0.15s ease;
+  white-space: nowrap;
+}
+.dashboard-extra-chart-tooltip.visible {
+  opacity: 1;
+}
+.dashboard-ai-entry {
+  position: absolute;
+  top: -42px;
+  right: 16px;
+  z-index: 100;
+}
+.dashboard-ai-btn {
+  width: 110px;
+  height: 36px;
+  border: none;
+  border-radius: 4px;
+  background-color: #1677ff;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: Roboto, "Source Han Sans SC", "Microsoft YaHei", Arial, sans-serif;
+  transition: background-color 0.2s;
+}
+.dashboard-ai-btn:hover {
+  background-color: #0958d9;
+}
+.dashboard-ai-btn.dashboard-ai-btn-active {
+  background-color: #0958d9;
+}
+.dashboard-ai-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+.dashboard-ai-btn-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: #ffffff;
+}
+.dashboard-ai-btn-text {
+  line-height: 1;
+}
+.dashboard-ai-mask {
+  position: fixed;
+  top: 0;
+  left: 220px;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+  z-index: 1100;
+}
+.dashboard-ai-mask.visible {
+  display: block;
+}
+.dashboard-ai-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background-color: #fff;
+  border-left: 1px solid #e8e8e8;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-out;
+}
+.dashboard-ai-drawer.open {
+  transform: translateX(0);
+}
+.dashboard-ai-drawer-header {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.dashboard-ai-drawer-close {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+}
+.dashboard-ai-drawer-close:hover {
+  color: #262626;
+}
+.dashboard-ai-drawer-body {
+  position: relative;
+  flex: 1;
+}
+.dashboard-ai-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  z-index: 1;
+}
+.dashboard-ai-spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid #d9d9d9;
+  border-top-color: #1677ff;
+  animation: dashboard-ai-spin 1s linear infinite;
+}
+.dashboard-ai-iframe {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: center;
+}
+.form-item {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+}
+.form-item-label {
+  margin-right: 6px;
+  color: #595959;
+  white-space: nowrap;
+}
+.form-item-control input,
+.form-item-control select {
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  padding: 0 8px;
+  font-size: 13px;
+  min-width: 120px;
+}
+.form-item-control input:focus,
+.form-item-control select:focus {
+  outline: none;
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
+}
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ai-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+  background-color: #fff;
+  color: #1f1f1f;
+}
+.btn-primary {
+  background-color: #1677ff;
+  border-color: #1677ff;
+  color: #fff;
+}
+.btn-primary:hover {
+  background-color: #4096ff;
+  border-color: #4096ff;
+}
+.btn-ai {
+  background-color: #1677ff;
+  border-color: #1677ff;
+  color: #fff;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+}
+.btn-ai:hover {
+  background-color: #4096ff;
+  border-color: #4096ff;
+  box-shadow: 0 3px 6px rgba(22, 119, 255, 0.35);
+}
+.btn-ai-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin-right: 6px;
+  font-size: 11px;
+}
+.btn-default {
+  border-color: #d9d9d9;
+  background-color: #fff;
+}
+.btn-default:hover {
+  border-color: #4096ff;
+  color: #1677ff;
+}
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.table-wrapper {
+  margin-top: 16px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+thead {
+  background-color: #fafafa;
+}
+th,
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: left;
+  white-space: nowrap;
+}
+th.ai-score-col,
+td.ai-score-col {
+  width: 80px;
+  text-align: center;
+}
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+th.sortable span.sort-indicator {
+  margin-left: 4px;
+  font-size: 10px;
+  color: #bfbfbf;
+}
+tbody tr:hover {
+  background-color: #fafafa;
+}
+.status-badge {
+  display: inline-block;
+  padding: 0 8px;
+  height: 22px;
+  line-height: 22px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+.status-new {
+  background-color: #e6f4ff;
+  color: #1677ff;
+}
+.status-following {
+  background-color: #fff7e6;
+  color: #d48806;
+}
+.status-converted {
+  background-color: #f6ffed;
+  color: #389e0d;
+}
+.ai-score-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1677ff;
+  background-color: #e6f4ff;
+  white-space: nowrap;
+}
+.ai-score-low {
+  background-color: #e6f4ff;
+}
+.ai-score-low:hover {
+  background-color: #bae0ff;
+}
+.ai-score-medium {
+  background-color: #bae0ff;
+}
+.ai-score-medium:hover {
+  background-color: #91d5ff;
+}
+.ai-score-high {
+  background-color: #91d5ff;
+}
+.ai-score-high:hover {
+  background-color: #69c0ff;
+}
+.ai-score-tooltip {
+  position: fixed;
+  width: 280px;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  z-index: 900;
+}
+.ai-score-tooltip.visible {
+  visibility: visible;
+  opacity: 1;
+}
+.ai-score-tooltip-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+.ai-score-tooltip-list {
+  margin: 0;
+  padding-left: 18px;
+}
+.ai-score-tooltip-list li {
+  margin-bottom: 4px;
+}
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12px;
+}
+.pagination-info {
+  margin-right: auto;
+  color: #8c8c8c;
+}
+.pagination button {
+  min-width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+}
+.pagination button.active {
+  background-color: #1677ff;
+  border-color: #1677ff;
+  color: #fff;
+}
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.ai-drawer-mask {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.25);
+  display: none;
+  z-index: 1000;
+}
+.ai-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 400px;
+  max-width: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+.ai-drawer-header {
+  height: 56px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.ai-drawer-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ai-drawer-title-mark {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #1677ff;
+  color: #fff;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ai-drawer-close {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  color: #8c8c8c;
+}
+.ai-drawer-close:hover {
+  color: #262626;
+}
+.ai-drawer-body {
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ai-iframe-container {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.ai-iframe-loading,
+.ai-iframe-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  font-size: 13px;
+  text-align: center;
+  background-color: #fff;
+  color: #8c8c8c;
+  z-index: 1;
+}
+.ai-iframe-error {
+  color: #cf1322;
+}
+.ai-iframe {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: none;
+}
+.communication-main {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+.communication-left {
+  flex: 3;
+  min-width: 0;
+}
+.communication-right {
+  flex: 2;
+  min-width: 0;
+}
+.communication-panel {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 16px;
+  height: calc(100vh - 56px - 24px * 2 - 16px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.communication-panel + .communication-panel {
+  margin-top: 16px;
+}
+.communication-panel-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+.communication-dialog-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.communication-message {
+  max-width: 80%;
+  margin-bottom: 12px;
+}
+.communication-message-meta {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.communication-author {
+  font-size: 14px;
+  font-weight: 600;
+}
+.communication-author-seller {
+  color: #1677ff;
+}
+.communication-author-customer {
+  color: #333;
+}
+.communication-time {
+  margin-left: 8px;
+  font-size: 12px;
+  color: #999;
+}
+.communication-content {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  padding: 12px;
+  border-radius: 8px;
+  word-break: break-word;
+}
+.communication-message-seller {
+  text-align: left;
+}
+.communication-message-seller .communication-content {
+  display: inline-block;
+  background-color: #e6f4ff;
+}
+.communication-message-customer {
+  text-align: right;
+  margin-left: auto;
+}
+.communication-message-customer .communication-content {
+  display: inline-block;
+  background-color: #f5f5f5;
+}
+.communication-summary-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+}
+.communication-summary-list li {
+  margin-bottom: 6px;
+}
+.communication-summary-list li::marker {
+  color: #1677ff;
+}
+.communication-loading {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(245, 247, 250, 0.8);
+  z-index: 10;
+}
+.communication-loading-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #666;
+}
+.communication-spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid #d9d9d9;
+  border-top-color: #1677ff;
+  animation: dashboard-ai-spin 1s linear infinite;
+}
+.files-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.files-page-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+.files-page-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.files-search-input {
+  width: 200px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  padding: 0 8px;
+  font-size: 13px;
+}
+.files-search-input:focus {
+  outline: none;
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
+}
+.files-generate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 120px;
+  height: 36px;
+  border-radius: 4px;
+  border: none;
+  background-color: #1677ff;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: Roboto, "Source Han Sans SC", "Microsoft YaHei", Arial, sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+.files-generate-btn:hover {
+  background-color: #0958d9;
+}
+.files-generate-btn-active {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.files-generate-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.files-generate-btn-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: #ffffff;
+  stroke-width: 2;
+  fill: none;
+}
+.files-table-wrapper {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 0;
+  overflow-x: auto;
+}
+.files-table {
+  min-width: 900px;
+}
+.files-table thead {
+  background-color: #fafafa;
+}
+.files-table th {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  height: 48px;
+  border-bottom: 1px solid #e8e8e8;
+}
+.files-table td {
+  height: 48px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.files-table tbody tr:nth-child(odd) {
+  background-color: #fff;
+}
+.files-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+.files-table tbody tr:hover {
+  background-color: #e6f4ff;
+}
+.files-col-created-at,
+.files-col-updated-at {
+  width: 180px;
+  text-align: center;
+  color: #666;
+}
+.files-col-name {
+  width: 220px;
+  text-align: left;
+}
+.files-name-text {
+  max-width: 220px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.files-name-text[title] {
+  cursor: default;
+}
+.files-col-type {
+  width: 120px;
+  text-align: center;
+}
+.files-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #666;
+}
+.files-type-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: #1677ff;
+  stroke-width: 2;
+  fill: none;
+}
+.files-col-creator {
+  width: 120px;
+  text-align: center;
+  color: #666;
+}
+.files-col-actions {
+  width: 140px;
+  text-align: center;
+}
+.files-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.files-action-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+.files-action-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+  fill: none;
+}
+.files-action-download svg {
+  stroke: #1677ff;
+}
+.files-action-download:hover svg {
+  stroke: #0958d9;
+}
+.files-action-delete svg {
+  stroke: #ff4d4f;
+}
+.files-action-delete:hover svg {
+  stroke: #d9363e;
+}
+.files-empty {
+  padding: 48px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 14px;
+  gap: 12px;
+}
+.files-empty-icon svg {
+  width: 48px;
+  height: 48px;
+  stroke: #d9d9d9;
+  stroke-width: 2;
+  fill: none;
+}
+.files-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px 12px;
+  font-size: 12px;
+}
+.files-page-size {
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  padding: 0 8px;
+  font-size: 12px;
+}
+.files-page-size:focus {
+  outline: none;
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
+}
+.files-pagination-info {
+  color: #8c8c8c;
+}
+.files-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.files-pagination-controls button {
+  min-width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+}
+.files-pagination-controls button.active {
+  background-color: #1677ff;
+  border-color: #1677ff;
+  color: #fff;
+}
+.files-pagination-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.files-modal-mask {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.25);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+}
+.files-modal {
+  display: none;
+  width: 420px;
+  max-width: 90%;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 20px 24px 16px;
+}
+.files-modal-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+.files-modal-body {
+  margin-bottom: 16px;
+}
+.files-form-item {
+  margin-bottom: 12px;
+}
+.files-form-label {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 4px;
+}
+.files-form-control input,
+.files-form-control select {
+  width: 100%;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  padding: 0 8px;
+  font-size: 13px;
+}
+.files-form-control input:focus,
+.files-form-control select:focus {
+  outline: none;
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
+}
+.files-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.files-btn {
+  min-width: 72px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  background-color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+.files-btn-primary {
+  border-color: #1677ff;
+  background-color: #1677ff;
+  color: #fff;
+}
+.files-btn-primary:hover {
+  background-color: #4096ff;
+  border-color: #4096ff;
+}
+.files-btn-danger {
+  border-color: #ff4d4f;
+  background-color: #ff4d4f;
+  color: #fff;
+}
+.files-btn-danger:hover {
+  background-color: #d9363e;
+  border-color: #d9363e;
+  cursor: pointer;
+}
+.files-delete-modal {
+  display: none;
+  width: 360px;
+  max-width: 90%;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 20px 24px 16px;
+}
+.files-delete-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+.files-delete-content {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 16px;
+}
+.files-name-link {
+  color: #1677ff;
+  cursor: pointer;
+  text-decoration: none;
+}
+.files-name-link:hover {
+  text-decoration: underline;
+}
+.submenu-item {
+  padding-left: 40px;
+  font-size: 13px;
+}
+.submenu-item .icon svg {
+  width: 18px;
+  height: 18px;
+}
+.file-detail-wrapper {
+  display: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.file-detail-wrapper.visible {
+  display: block;
+}
+.file-detail-wrapper.enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+.file-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.file-detail-back {
+  font-size: 13px;
+  color: #1677ff;
+  cursor: pointer;
+}
+.file-detail-back:hover {
+  text-decoration: underline;
+}
+.file-detail-panel {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 24px;
+  height: calc(100vh - 56px - 24px * 2);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.file-detail-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.file-detail-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.file-detail-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  text-align: left;
+}
+.file-detail-meta {
+  font-size: 14px;
+  color: #666;
+  display: flex;
+  gap: 16px;
+}
+.file-detail-export-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 110px;
+  height: 36px;
+  border-radius: 4px;
+  border: none;
+  background-color: #1677ff;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: Roboto, "Source Han Sans SC", "Microsoft YaHei", Arial, sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+.file-detail-export-btn:hover:not(.file-detail-export-btn-loading) {
+  background-color: #0958d9;
+}
+.file-detail-export-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.file-detail-export-btn-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: #ffffff;
+}
+.file-detail-export-btn-loading {
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+.file-detail-export-btn-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  animation: dashboard-ai-spin 1s linear infinite;
+}
+.file-detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+.file-detail-section {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+.file-detail-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 8px;
+}
+.file-detail-highlight {
+  background-color: #fffbe6;
+  transition: background-color 0.3s ease;
+}
+.template-detail-wrapper {
+  display: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.template-detail-wrapper.visible {
+  display: block;
+}
+.template-detail-wrapper.enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+.template-detail-inner {
+  position: relative;
+}
+.template-detail-loading {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(245, 247, 250, 0.9);
+  z-index: 10;
+}
+.template-detail-card {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.template-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.template-detail-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.template-detail-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+.template-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 14px;
+  color: #666;
+}
+.template-detail-meta-divider {
+  color: #d9d9d9;
+}
+.template-save-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100px;
+  height: 36px;
+  border-radius: 4px;
+  border: none;
+  background-color: #1677ff;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: Roboto, "Source Han Sans SC", "Microsoft YaHei", Arial, sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.template-save-btn:hover:not(.template-save-btn-loading):not(.template-save-btn-disabled) {
+  background-color: #0958d9;
+}
+.template-save-btn-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: #ffffff;
+}
+.template-save-btn-disabled {
+  background-color: #c9c9c9;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.template-save-btn-loading {
+  cursor: not-allowed;
+}
+.template-save-btn-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  animation: dashboard-ai-spin 1s linear infinite;
+}
+.template-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.template-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+.template-section-extra {
+  font-size: 12px;
+  color: #999;
+}
+.template-text-editor {
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 16px;
+  min-height: 300px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  background-color: #fff;
+  overflow-y: auto;
+}
+.template-text-editor:focus {
+  outline: none;
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
+}
+.template-text-editor-error {
+  border-color: #ff4d4f;
+}
+.template-text-error {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #ff4d4f;
+  min-height: 16px;
+}
+.template-attachment-desc {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+.template-upload-area {
+  border-radius: 8px;
+  border: 1px dashed #e8e8e8;
+  padding: 32px;
+  text-align: center;
+  margin-top: 16px;
+}
+.template-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 40px;
+  border-radius: 4px;
+  border: 1px solid #1677ff;
+  background-color: #ffffff;
+  color: #1677ff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.template-upload-btn:hover {
+  background-color: #e6f4ff;
+  border-color: #4096ff;
+  color: #0958d9;
+}
+.template-upload-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #999;
+}
+.template-attachments-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+}
+.template-attachment-card {
+  width: calc((100% - 32px) / 3);
+  min-width: 220px;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  padding: 12px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+.template-attachment-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.template-attachment-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background-color: #e6f4ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1677ff;
+  font-size: 12px;
+}
+.template-attachment-name {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.template-attachment-size {
+  font-size: 12px;
+  color: #999;
+}
+.template-attachment-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.template-attachment-delete {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.template-attachment-delete:hover {
+  color: #ff4d4f;
+}
+.template-attachment-popconfirm {
+  position: absolute;
+  right: 8px;
+  top: 32px;
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 12px;
+  color: #333;
+  z-index: 20;
+}
+.template-attachment-popconfirm-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.template-popconfirm-btn {
+  min-width: 48px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  background-color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+.template-popconfirm-btn-danger {
+  border-color: #ff4d4f;
+  background-color: #ff4d4f;
+  color: #fff;
+}
+.template-popconfirm-btn-danger:hover {
+  background-color: #d9363e;
+  border-color: #d9363e;
+}
+.template-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.template-preview-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 36px;
+  border-radius: 4px;
+  border: none;
+  background-color: #1677ff;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.template-preview-btn:hover:not(.template-preview-btn-loading) {
+  background-color: #0958d9;
+}
+.template-preview-btn-loading {
+  cursor: not-allowed;
+}
+.template-preview-container {
+  margin-top: 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 24px;
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+.template-preview-close {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  color: #999;
+}
+.template-preview-close:hover {
+  color: #666;
+}
+@media (max-width: 1366px) {
+  .template-attachment-card {
+    width: 100%;
+  }
+}
+.files-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  min-width: 260px;
+  max-width: 360px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #333;
+  z-index: 1300;
+  display: none;
+}
+.files-toast-show {
+  display: block;
+}
+.files-toast-message {
+  margin-bottom: 4px;
+}
+.files-toast-sub {
+  font-size: 12px;
+  color: #666;
+}
+.file-ai-assistant {
+  position: fixed;
+  right: 16px;
+  top: 80px;
+  width: 320px;
+  height: 600px;
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+}
+.file-ai-assistant-header {
+  height: 40px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: move;
+  border-bottom: 1px solid #f0f0f0;
+}
+.file-ai-assistant-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+.file-ai-assistant-toggle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.file-ai-assistant-toggle:hover {
+  background-color: #f5f5f5;
+}
+.file-ai-assistant-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.file-ai-assistant-dialog {
+  flex: 1;
+  background-color: #fafafa;
+  padding: 12px;
+  overflow-y: auto;
+}
+.file-ai-message {
+  max-width: 90%;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 8px 0;
+}
+.file-ai-message-user {
+  margin-left: auto;
+  background-color: #1677ff;
+  color: #fff;
+}
+.file-ai-message-assistant {
+  margin-right: auto;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #e8e8e8;
+}
+.file-ai-assistant-input {
+  height: 40px;
+  padding: 6px 8px 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid #f0f0f0;
+  background-color: #fff;
+}
+.file-ai-assistant-input input {
+  flex: 1;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  height: 28px;
+  padding: 0 8px;
+  font-size: 14px;
+  color: #333;
+}
+.file-ai-assistant-input input::placeholder {
+  color: #999;
+}
+.file-ai-assistant-input input:focus {
+  outline: none;
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
+}
+.file-ai-assistant-send {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.file-ai-assistant-send svg {
+  width: 20px;
+  height: 20px;
+  fill: #1677ff;
+}
+.file-ai-assistant-send:hover svg {
+  fill: #0958d9;
+}
+.file-ai-assistant-collapsed {
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+}
+.file-ai-assistant-collapsed .file-ai-assistant-body {
+  display: none;
+}
+.file-ai-assistant-collapsed .file-ai-assistant-header {
+  justify-content: center;
+}
+.file-ai-assistant-collapsed .file-ai-assistant-title {
+  display: none;
+}
+.file-ai-assistant-collapsed .file-ai-assistant-toggle {
+  cursor: pointer;
+}
+@media (max-width: 1366px) {
+  .file-ai-assistant {
+    top: 80px;
+  }
+  .file-ai-assistant-expanded-mobile {
+    width: 320px;
+  }
+  .file-detail-export-btn {
+    width: 90px;
+    font-size: 12px;
+  }
+}
+.ai-drawer-open .ai-drawer-mask {
+  display: block;
+}
+.ai-drawer-open .ai-drawer {
+  transform: translateX(0);
+}
+@keyframes dashboard-ai-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 1366px) {
+  .dashboard-extra-charts-row {
+    flex-direction: column;
+  }
+  .dashboard-ai-btn {
+    width: 90px;
+  }
+  .dashboard-ai-drawer {
+    width: 320px;
+  }
+  th.ai-score-col,
+  td.ai-score-col {
+    width: 60px;
+  }
+  .ai-score-tag {
+    font-size: 12px;
+  }
+}
+@media (max-width: 1400px) {
+  .dashboard-cards-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 960px) {
+  .layout {
+    flex-direction: column;
+  }
+  .sider {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+  }
+  .sider-logo {
+    margin: 8px 16px;
+  }
+  .menu {
+    display: flex;
+  }
+  .menu-item {
+    padding: 8px 16px;
+  }
+  .dashboard-cards-row {
+    grid-template-columns: 1fr;
+  }
+  .communication-main {
+    flex-direction: column;
+  }
+  .communication-panel {
+    height: auto;
+  }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sider">
+    <div class="sider-logo">CRM系统</div>
+    <ul class="menu" id="sideMenu">
+      <li class="menu-item active" data-view="leads">
+        <span class="icon">◆</span>
+        <span>线索管理</span>
+      </li>
+      <li class="menu-item" data-view="dashboard">
+        <span class="icon">★</span>
+        <span>数据看板</span>
+      </li>
+      <li class="menu-item" data-view="customers">
+        <span class="icon">◎</span>
+        <span>客户管理</span>
+      </li>
+      <li class="menu-item" data-view="orders">
+        <span class="icon">✔</span>
+        <span>成单管理</span>
+      </li>
+      <li class="menu-item" data-view="files" data-has-submenu="true">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 3h7l5 5v13H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path>
+            <path d="M13 3v5h5"></path>
+          </svg>
+        </span>
+        <span>生成文件</span>
+      </li>
+      <li class="menu-item submenu-item" data-view="fileTemplates" data-parent="files" style="display:none;">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="5" y="4" width="14" height="4"></rect>
+            <rect x="5" y="10" width="10" height="3"></rect>
+            <rect x="5" y="15" width="8" height="3"></rect>
+          </svg>
+        </span>
+        <span>文件模板管理</span>
+      </li>
+      <li class="menu-item" data-view="communications">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-4.5l-3.2 3.2A1 1 0 0 1 8 17.8V15H7a3 3 0 0 1-3-3V5z"></path>
+          </svg>
+        </span>
+        <span>客户沟通记录</span>
+      </li>
+    </ul>
+  </aside>
+  <main class="main">
+    <header class="header" id="pageHeaderTitle">线索管理</header>
+    <section class="content">
+      <div id="viewLeads">
+        <div class="card">
+        <div class="toolbar">
+          <form class="filter-form" id="filterForm" onsubmit="return false;">
+            <div class="form-item">
+              <div class="form-item-label">时间</div>
+              <div class="form-item-control">
+                <input type="date" id="startDate">
+              </div>
+              <span style="margin: 0 4px;">-</span>
+              <div class="form-item-control">
+                <input type="date" id="endDate">
+              </div>
+            </div>
+            <div class="form-item">
+              <div class="form-item-label">来源</div>
+              <div class="form-item-control">
+                <select id="sourceSelect">
+                  <option value="">全部</option>
+                  <option value="官网注册">官网注册</option>
+                  <option value="活动报名">活动报名</option>
+                  <option value="线下拓展">线下拓展</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-item">
+              <div class="form-item-label">状态</div>
+              <div class="form-item-control">
+                <select id="statusSelect">
+                  <option value="">全部</option>
+                  <option value="新建">新建</option>
+                  <option value="跟进中">跟进中</option>
+                  <option value="已转化">已转化</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-item">
+              <div class="button-group">
+                <button type="button" class="btn btn-primary" id="searchBtn">搜索</button>
+                <button type="button" class="btn btn-default" id="resetBtn">重置</button>
+              </div>
+            </div>
+          </form>
+          <div class="ai-toolbar-actions">
+            <div class="button-group">
+              <button type="button" class="btn btn-primary" id="addLeadBtn">增加线索</button>
+              <button type="button" class="btn btn-default" id="exportBtn">导出线索</button>
+              <button type="button" class="btn btn-default" id="convertBtn">转化为客户</button>
+            </div>
+            <button type="button" class="btn btn-ai" id="aiAssistantBtn">
+              <span class="btn-ai-icon">AI</span>
+              <span>AI助手</span>
+            </button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:40px;">
+                  <input type="checkbox" id="selectAll">
+                </th>
+                <th class="sortable" data-field="name">
+                  线索名称
+                  <span class="sort-indicator">⇵</span>
+                </th>
+                <th class="sortable" data-field="contact">
+                  联系人
+                  <span class="sort-indicator">⇵</span>
+                </th>
+                <th>电话</th>
+                <th class="sortable" data-field="source">
+                  来源
+                  <span class="sort-indicator">⇵</span>
+                </th>
+                <th class="sortable" data-field="createdAt">
+                  创建时间
+                  <span class="sort-indicator">⇵</span>
+                </th>
+                <th class="sortable" data-field="status">
+                  状态
+                  <span class="sort-indicator">⇵</span>
+                </th>
+                <th class="ai-score-col">
+                  AI打分
+                </th>
+              </tr>
+            </thead>
+            <tbody id="leadsTbody"></tbody>
+          </table>
+          <div class="pagination">
+            <div class="pagination-info" id="paginationInfo"></div>
+            <button type="button" id="prevPageBtn">上一页</button>
+            <div id="pageNumbers"></div>
+            <button type="button" id="nextPageBtn">下一页</button>
+          </div>
+        </div>
+      </div>
+      </div>
+      <div id="viewDashboard" style="display:none;">
+        <div class="dashboard-ai-entry">
+          <button type="button" class="dashboard-ai-btn" id="dashboardAiBtn">
+            <span class="dashboard-ai-btn-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="8" r="3"></circle>
+                <rect x="7" y="12" width="10" height="6" rx="3"></rect>
+                <circle cx="6" cy="12" r="1"></circle>
+                <circle cx="18" cy="12" r="1"></circle>
+              </svg>
+            </span>
+            <span class="dashboard-ai-btn-text">AI助手</span>
+          </button>
+        </div>
+        <div class="dashboard-cards-row">
+          <div class="dashboard-card">
+            <div>
+              <div class="dashboard-card-title">本月销售额</div>
+              <div class="dashboard-card-value">¥1,250,000</div>
+            </div>
+            <div class="dashboard-card-sub">
+              同比上月
+              <span class="value-up">+12.5%</span>
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div>
+              <div class="dashboard-card-title">本月客户数</div>
+              <div class="dashboard-card-value">89</div>
+            </div>
+            <div class="dashboard-card-sub">
+              同比上月
+              <span class="value-up">+8.2%</span>
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div>
+              <div class="dashboard-card-title">本月成单数</div>
+              <div class="dashboard-card-value">42</div>
+            </div>
+            <div class="dashboard-card-sub">
+              同比上月
+              <span class="value-up">+5.7%</span>
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="dashboard-card-title">本月业绩完成情况</div>
+            <div class="dashboard-progress-row">
+              <div class="dashboard-progress-bar">
+                <div class="dashboard-progress-inner" style="width:78%;"></div>
+              </div>
+              <div class="dashboard-progress-percent">78% 完成</div>
+            </div>
+            <div class="dashboard-progress-detail">目标¥1,600,000 / 当前¥1,250,000</div>
+          </div>
+        </div>
+        <div class="dashboard-chart-card">
+          <div class="dashboard-chart-header">
+            <div class="dashboard-chart-title">近15天业绩趋势</div>
+            <div class="dashboard-chart-tabs" id="dashboardChartTabs">
+              <div class="dashboard-chart-tab active" data-metric="sales">销售额</div>
+              <div class="dashboard-chart-tab" data-metric="customers">客户数</div>
+              <div class="dashboard-chart-tab" data-metric="orders">订单数</div>
+            </div>
+          </div>
+          <div class="dashboard-chart-body">
+            <canvas id="dashboardChartCanvas" class="dashboard-chart-canvas"></canvas>
+            <div class="dashboard-chart-tooltip" id="dashboardChartTooltip">
+              <div class="dashboard-chart-tooltip-line" id="dashboardTooltipDate"></div>
+              <div class="dashboard-chart-tooltip-line" id="dashboardTooltipValue"></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-extra-charts-row">
+          <div class="dashboard-extra-chart-card">
+            <div class="dashboard-extra-chart-header">
+              <div class="dashboard-extra-chart-title">客户转化漏斗</div>
+            </div>
+            <div class="dashboard-extra-chart-body">
+              <canvas id="funnelChartCanvas" class="dashboard-extra-chart-canvas"></canvas>
+              <div class="dashboard-extra-chart-tooltip" id="funnelChartTooltip"></div>
+            </div>
+          </div>
+          <div class="dashboard-extra-chart-card">
+            <div class="dashboard-extra-chart-header">
+              <div class="dashboard-extra-chart-title">售卖商品统计</div>
+            </div>
+            <div class="dashboard-extra-chart-body">
+              <canvas id="productPieChartCanvas" class="dashboard-extra-chart-canvas"></canvas>
+              <div class="dashboard-extra-chart-tooltip" id="productPieChartTooltip"></div>
+            </div>
+          </div>
+          <div class="dashboard-extra-chart-card">
+            <div class="dashboard-extra-chart-header">
+              <div class="dashboard-extra-chart-title">售卖渠道top排行榜</div>
+            </div>
+            <div class="dashboard-extra-chart-body">
+              <canvas id="channelBarChartCanvas" class="dashboard-extra-chart-canvas"></canvas>
+              <div class="dashboard-extra-chart-tooltip" id="channelBarChartTooltip"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="viewFiles" style="display:none;">
+        <div class="files-page-header">
+          <div class="files-page-title">文件列表</div>
+          <div class="files-page-actions">
+            <input
+              type="text"
+              id="filesSearchInput"
+              class="files-search-input"
+              placeholder="搜索文件名"
+            >
+            <button type="button" class="files-generate-btn" id="filesGenerateBtn">
+              <span class="files-generate-btn-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 5v14"></path>
+                  <path d="M5 12h14"></path>
+                </svg>
+              </span>
+              <span>生成文件</span>
+            </button>
+          </div>
+        </div>
+        <div class="files-table-wrapper">
+          <table class="files-table">
+            <thead>
+              <tr>
+                <th class="files-col-created-at">文件创建时间</th>
+                <th class="files-col-name">文件名</th>
+                <th class="files-col-type">文件类型</th>
+                <th class="files-col-updated-at">文件修改时间</th>
+                <th class="files-col-creator">文件创建人</th>
+                <th class="files-col-actions">文件操作</th>
+              </tr>
+            </thead>
+            <tbody id="filesTbody"></tbody>
+          </table>
+          <div class="files-empty" id="filesEmpty" style="display:none;">
+            <div class="files-empty-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4 4h9l3 3h4v13H4z"></path>
+                <path d="M9 12h6"></path>
+                <path d="M9 16h3"></path>
+              </svg>
+            </div>
+            <div>暂无文件数据，请点击右上方「生成文件」创建</div>
+          </div>
+        </div>
+        <div class="files-pagination">
+          <div class="files-pagination-info" id="filesPaginationInfo"></div>
+          <select id="filesPageSize" class="files-page-size">
+            <option value="5">5条/页</option>
+            <option value="10" selected>10条/页</option>
+            <option value="20">20条/页</option>
+          </select>
+          <div class="files-pagination-controls" id="filesPaginationControls"></div>
+        </div>
+      </div>
+      <div id="viewTemplateFiles" style="display:none;">
+        <div class="files-page-header">
+          <div class="files-page-title">模板文件列表</div>
+          <div class="files-page-actions">
+            <input
+              type="text"
+              id="templateSearchInput"
+              class="files-search-input"
+              placeholder="搜索模板名称"
+            >
+          </div>
+        </div>
+        <div class="files-table-wrapper">
+          <table class="files-table" id="templateFilesTable">
+            <thead>
+              <tr>
+                <th class="files-col-created-at">模板文件创建时间</th>
+                <th class="files-col-name">模板文件名</th>
+                <th class="files-col-updated-at">文件修改时间</th>
+                <th class="files-col-creator">文件创建人</th>
+              </tr>
+            </thead>
+            <tbody id="templateTbody"></tbody>
+          </table>
+          <div class="files-empty" id="templateEmpty" style="display:none;">
+            <div class="files-empty-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <rect x="4" y="4" width="16" height="4"></rect>
+                <rect x="4" y="10" width="12" height="3"></rect>
+                <rect x="4" y="15" width="10" height="3"></rect>
+              </svg>
+            </div>
+            <div>暂无模板文件，可联系管理员添加</div>
+          </div>
+        </div>
+        <div class="files-pagination">
+          <div class="files-pagination-info" id="templatePaginationInfo"></div>
+          <select id="templatePageSize" class="files-page-size">
+            <option value="10" selected>10条/页</option>
+            <option value="20">20条/页</option>
+            <option value="50">50条/页</option>
+          </select>
+          <div class="files-pagination-controls" id="templatePaginationControls"></div>
+        </div>
+      </div>
+      <div id="viewTemplateDetail" class="template-detail-wrapper">
+        <div class="file-detail-header">
+          <div class="file-detail-back" id="templateDetailBack">返回模板列表</div>
+        </div>
+        <div class="template-detail-inner">
+          <div class="template-detail-loading" id="templateDetailLoading">
+            <div class="communication-loading-inner">
+              <div class="communication-spinner"></div>
+              <div>模板详情加载中...</div>
+            </div>
+          </div>
+          <div class="template-detail-card">
+            <div class="template-detail-header">
+              <div class="template-detail-title-group">
+                <div class="template-detail-title" id="templateDetailTitle">模板文件名称</div>
+                <div class="template-detail-meta" id="templateDetailMeta"></div>
+              </div>
+              <button type="button" class="template-save-btn template-save-btn-disabled" id="templateSaveBtn">
+                <span class="template-save-btn-icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M5 4h11l3 3v13H5z"></path>
+                    <path d="M9 4v5h4V4"></path>
+                    <path d="M8 13h8v6H8z"></path>
+                  </svg>
+                </span>
+                <span id="templateSaveBtnText">保存</span>
+              </button>
+            </div>
+          </div>
+          <div class="template-detail-card">
+            <div class="template-section-header">
+              <div class="template-section-title">模板文字描述</div>
+              <div class="template-section-extra" id="templateTextCount">0 字</div>
+            </div>
+            <div
+              id="templateTextEditor"
+              class="template-text-editor"
+              contenteditable="true"
+            ></div>
+            <div class="template-text-error" id="templateTextError"></div>
+          </div>
+          <div class="template-detail-card">
+            <div class="template-section-header">
+              <div class="template-section-title">附件参考文件</div>
+              <div class="template-section-extra">可添加多个附件文件作为模板参考</div>
+            </div>
+            <div class="template-attachment-desc">
+              支持常见办公文档与图片，单个文件大小可按业务规则限制。
+            </div>
+            <div class="template-upload-area">
+              <button type="button" class="template-upload-btn" id="templateUploadBtn">选择附件文件</button>
+              <input
+                type="file"
+                id="templateUploadInput"
+                multiple
+                style="display:none;"
+              >
+              <div class="template-upload-hint">
+                可一次选择多个文件，上传后将展示在下方列表中。
+              </div>
+            </div>
+            <div class="template-attachments-list" id="templateAttachmentsList"></div>
+          </div>
+          <div class="template-detail-card">
+            <div class="template-preview-header">
+              <div class="template-section-title">模板测试与预览</div>
+              <button type="button" class="template-preview-btn" id="templatePreviewBtn">
+                测试生成预览
+              </button>
+            </div>
+            <div class="template-preview-container" id="templatePreviewContainer" style="display:none;">
+              <button type="button" class="template-preview-close" id="templatePreviewClose">
+                关闭预览
+              </button>
+              <div id="templatePreviewContent"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="viewFileDetail" class="file-detail-wrapper">
+        <div class="file-detail-header">
+          <div class="file-detail-back" id="fileDetailBack">返回文件列表</div>
+        </div>
+        <div class="file-detail-panel">
+          <div class="file-detail-panel-header">
+            <div class="file-detail-title-group">
+              <div class="file-detail-title">培训课程合同</div>
+              <div class="file-detail-meta">
+                <span id="contractNo">合同编号：TC-20260001</span>
+                <span id="contractDate">签订日期：2026-01-01</span>
+              </div>
+            </div>
+            <button type="button" class="file-detail-export-btn" id="fileDetailExportBtn">
+              <span class="file-detail-export-btn-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 3v12"></path>
+                  <path d="M8 11l4 4 4-4"></path>
+                  <path d="M5 19h14"></path>
+                </svg>
+              </span>
+              <span id="fileDetailExportText">导出合同</span>
+            </button>
+          </div>
+          <div class="file-detail-content" id="fileDetailContent">
+            <div class="file-detail-section">
+              为明确甲乙双方在培训课程合作过程中的权利义务，保障双方合法权益，依据《中华人民共和国民法典》等相关法律法规，经友好协商，订立本合同。
+            </div>
+            <div class="file-detail-section">
+              <div class="file-detail-section-title">一、甲方信息</div>
+              <div>甲方（委托方）：北京示例科技有限公司</div>
+              <div>地址：北京市朝阳区示例路88号示例大厦A座15层</div>
+              <div>联系人：张三</div>
+              <div>联系电话：010-88888888</div>
+            </div>
+            <div class="file-detail-section">
+              <div class="file-detail-section-title">二、乙方信息</div>
+              <div>乙方（培训方）：上海示例教育科技有限公司</div>
+              <div>地址：上海市浦东新区示例大道100号示例中心9层</div>
+              <div>联系人：李四</div>
+              <div>联系电话：021-66666666</div>
+            </div>
+            <div class="file-detail-section" id="contractCourseSection">
+              <div class="file-detail-section-title">三、课程详情</div>
+              <div>课程名称：企业销售团队AI赋能实战培训</div>
+              <div>课程时长：2天，共计12学时（每天9:30-12:00，14:00-17:30）</div>
+              <div id="contractFeeLine">
+                课程费用：人民币
+                <span id="contractFeeAmount" class="file-detail-highlight-target">¥68,000</span>
+                （陆万捌仟元整），含培训讲师授课费、教材资料费及基础技术支持服务费。
+              </div>
+            </div>
+            <div class="file-detail-section">
+              <div class="file-detail-section-title">四、双方权利与义务</div>
+              <div>1. 甲方有权根据自身业务需求提出培训目标与重点方向，并要求乙方结合行业实践进行课程优化。</div>
+              <div>2. 甲方应保证参训人员按时参加培训，并提供必要的现场支持（如场地、投影设备、网络环境等）。</div>
+              <div>3. 乙方应根据双方确认的课程大纲安排具备实战经验的讲师授课，保证培训内容的专业性与实用性。</div>
+              <div>4. 未经乙方书面许可，甲方及参训学员不得以任何形式对课程内容进行录音、录像、传播或用于本合同约定范围之外的用途。</div>
+            </div>
+            <div class="file-detail-section" id="contractPaymentSection">
+              <div class="file-detail-section-title">五、付款方式</div>
+              <div id="contractPaymentText">
+                1. 甲方应在合同签订之日起
+                <span id="contractPaymentDays" class="file-detail-highlight-target">5个工作日内</span>
+                向乙方支付全部课程费用的100%，付款方式为对公转账。
+              </div>
+              <div>2. 乙方在收到款项后3个工作日内向甲方开具合法有效的增值税专用发票。</div>
+            </div>
+            <div class="file-detail-section">
+              <div class="file-detail-section-title">六、违约责任</div>
+              <div>1. 如因甲方原因需调整培训时间，甲方应至少提前5个工作日以书面形式通知乙方，双方协商变更培训安排。</div>
+              <div>2. 如甲方无正当理由单方面取消培训，且未提前通知乙方，则乙方有权要求甲方支付已约定课程费用的50%作为违约金。</div>
+              <div>3. 如因乙方原因导致培训无法按约定时间进行，乙方应积极协调改期；如甲方无法接受改期安排，乙方应退还甲方已支付的全部款项。</div>
+            </div>
+            <div class="file-detail-section">
+              <div class="file-detail-section-title">七、其他约定</div>
+              <div>1. 未尽事宜由双方友好协商解决，协商不成的，任一方可向乙方所在地有管辖权的人民法院提起诉讼。</div>
+              <div>2. 本合同以电子签署或双方盖章方式生效，自签署之日起有效。</div>
+            </div>
+            <div class="file-detail-section">
+              <div class="file-detail-section-title">八、签字确认</div>
+              <div>甲方（盖章）：________________________</div>
+              <div>授权代表签字：______________________</div>
+              <div>日期：________年____月____日</div>
+              <div style="margin-top:16px;">乙方（盖章）：________________________</div>
+              <div>授权代表签字：______________________</div>
+              <div>日期：________年____月____日</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="viewCommunications" style="display:none;">
+        <div class="communication-loading" id="communicationLoading">
+          <div class="communication-loading-inner">
+            <div class="communication-spinner"></div>
+            <div>沟通记录加载中...</div>
+          </div>
+        </div>
+        <div class="communication-main">
+          <div class="communication-left">
+            <div class="communication-panel">
+              <div class="communication-panel-header">客户沟通记录</div>
+              <div class="communication-dialog-list">
+                <div class="communication-message communication-message-seller">
+                  <div class="communication-message-meta">
+                    <span class="communication-author communication-author-seller">销售顾问</span>
+                    <span class="communication-time">2024-12-10 10:15:23</span>
+                  </div>
+                  <div class="communication-content">
+                    你好，我这边简单了解了一下贵公司的业务场景，初步判断我们的CRM系统在销售线索管理、客户画像和跟进效率提升上会比较匹配，想先确认一下，您当前主要关注的是提升销售转化率还是团队协作效率？
+                  </div>
+                </div>
+                <div class="communication-message communication-message-customer">
+                  <div class="communication-message-meta">
+                    <span class="communication-author communication-author-customer">客户</span>
+                    <span class="communication-time">2024-12-10 10:17:08</span>
+                  </div>
+                  <div class="communication-content">
+                    目前我们线索来源比较分散，销售跟进也不太统一，主要痛点是高意向线索没跟上来，容易流失；另外团队希望能有更清晰的客户阶段和跟进提醒。
+                  </div>
+                </div>
+                <div class="communication-message communication-message-seller">
+                  <div class="communication-message-meta">
+                    <span class="communication-author communication-author-seller">销售顾问</span>
+                    <span class="communication-time">2024-12-10 10:20:41</span>
+                  </div>
+                  <div class="communication-content">
+                    理解，那针对高意向线索的优先跟进，我们可以通过线索评分和自动标记高价值客户来解决；同时为销售配置标准化的跟进阶段和待办提醒，确保每个阶段都有明确动作和记录，方便管理层回看整个成交过程。
+                  </div>
+                </div>
+                <div class="communication-message communication-message-customer">
+                  <div class="communication-message-meta">
+                    <span class="communication-author communication-author-customer">客户</span>
+                    <span class="communication-time">2024-12-10 10:23:02</span>
+                  </div>
+                  <div class="communication-content">
+                    听起来比较符合我们的预期，价格和上线周期这块也需要评估一下，尤其是对现有系统影响和销售同事的学习成本。
+                  </div>
+                </div>
+                <div class="communication-message communication-message-seller">
+                  <div class="communication-message-meta">
+                    <span class="communication-author communication-author-seller">销售顾问</span>
+                    <span class="communication-time">2024-12-10 10:26:35</span>
+                  </div>
+                  <div class="communication-content">
+                    没问题，我们可以先从一个销售团队试点，保留您现有的主要流程，在不影响业务的前提下逐步迁移；同时会提供标准化培训和运营手册，确保同事在一周内可以熟练使用核心功能。
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="communication-right">
+            <div class="communication-panel">
+              <div class="communication-panel-header">客户分析</div>
+              <ul class="communication-summary-list">
+                <li>核心需求：希望统一管理多渠道线索、识别高意向客户，并通过标准化跟进流程提升整体销售转化率。</li>
+                <li>潜在顾虑：对系统价格及实施周期比较敏感，担心影响现有业务节奏，同时关注销售团队的学习成本和接受度。</li>
+                <li>意向程度：整体沟通语气积极，明确表达了当前痛点并认可解决方向，意向程度偏高（高）。</li>
+              </ul>
+            </div>
+            <div class="communication-panel">
+              <div class="communication-panel-header">后续建议</div>
+              <ul class="communication-summary-list">
+                <li>跟进时机：建议在24小时内发送试用方案与功能清单，并在3个工作日内安排一次包含业务负责人和销售主管的线上产品演示。</li>
+                <li>沟通重点：重点突出线索评分、高意向客户提醒、标准化跟进阶段以及与现有系统平滑对接的能力，同时补充2~3个同类型客户成功案例。</li>
+                <li>适配方案：推荐采用「销售CRM标准版 + 线索智能评分模块」，先在核心销售团队试点，后续根据效果逐步扩展到全员使用。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="ai-drawer-mask" id="aiDrawerMask">
+  <div class="ai-drawer" role="dialog" aria-modal="true" aria-labelledby="aiDrawerTitle">
+    <div class="ai-drawer-header">
+      <div class="ai-drawer-title" id="aiDrawerTitle">
+        <span class="ai-drawer-title-mark">AI</span>
+        <span>AI助手</span>
+      </div>
+      <button type="button" class="ai-drawer-close" id="aiDrawerCloseBtn">×</button>
+    </div>
+    <div class="ai-drawer-body">
+      <div class="ai-iframe-container">
+        <div class="ai-iframe-loading" id="aiIframeLoading">AI助手页面加载中...</div>
+        <div class="ai-iframe-error" id="aiIframeError" style="display:none;">页面加载失败，请刷新后重试</div>
+        <iframe
+          id="aiIframe"
+          class="ai-iframe"
+          title="AI助手"
+          src=""
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="aiScoreTooltip" class="ai-score-tooltip">
+  <div class="ai-score-tooltip-title">AI打分说明</div>
+  <ul class="ai-score-tooltip-list">
+    <li>打分维度：基于线索属性匹配度（行业、规模等）、行为活跃度（浏览、下载等）、需求明确度综合评估</li>
+    <li>分值含义：1-33分（低质量）、34-66分（中等质量）、67-99分（高质量）</li>
+    <li>加分项：完整公司信息、明确预算与决策人、近期多次访问官网/落地页、下载过核心资料或报名活动</li>
+    <li>减分项：联系方式不全或长期无法接通、行业与产品不匹配、近期明显表达无需求或已有稳定供应商</li>
+    <li>跟进建议：高分线索优先安排一对一深度沟通，中分线索以定期触达和内容运营为主，低分线索保持轻触达，集中精力在高潜力客户上；整体来看，高分线索转化概率相对低分线索可提升约3.2倍（参考行业基准数据）</li>
+  </ul>
+</div>
+<div class="files-modal-mask" id="filesModalMask">
+  <div class="files-modal" id="filesCreateModal">
+    <div class="files-modal-header">生成文件</div>
+    <div class="files-modal-body">
+      <div class="files-form-item">
+        <div class="files-form-label">文件名</div>
+        <div class="files-form-control">
+          <input type="text" id="filesNameInput" placeholder="请输入文件名">
+        </div>
+      </div>
+      <div class="files-form-item">
+        <div class="files-form-label">文件类型</div>
+        <div class="files-form-control">
+          <select id="filesTypeSelect">
+            <option value="PDF">PDF</option>
+            <option value="Word">Word</option>
+            <option value="Excel">Excel</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="files-modal-footer">
+      <button type="button" class="files-btn" id="filesCancelBtn">取消</button>
+      <button type="button" class="files-btn files-btn-primary" id="filesConfirmBtn">生成</button>
+    </div>
+  </div>
+  <div class="files-delete-modal" id="filesDeleteModal">
+    <div class="files-delete-title">确认删除</div>
+    <div class="files-delete-content" id="filesDeleteContent"></div>
+    <div class="files-modal-footer">
+      <button type="button" class="files-btn" id="filesDeleteCancelBtn">取消</button>
+      <button type="button" class="files-btn files-btn-danger" id="filesDeleteConfirmBtn">删除</button>
+    </div>
+  </div>
+  <div class="files-modal" id="filesExportModal">
+    <div class="files-modal-header">导出配置</div>
+    <div class="files-modal-body">
+      <div class="files-form-item">
+        <div class="files-form-label">导出内容</div>
+        <div class="files-form-control">
+          <label style="display:block;font-size:13px;color:#333;">
+            <input type="checkbox" id="exportBasicInfo" checked style="margin-right:4px;">合同基本信息
+          </label>
+          <label style="display:block;font-size:13px;color:#333;margin-top:4px;">
+            <input type="checkbox" id="exportClauses" checked style="margin-right:4px;">条款详情
+          </label>
+          <label style="display:block;font-size:13px;color:#333;margin-top:4px;">
+            <input type="checkbox" id="exportSignatures" checked style="margin-right:4px;">签字确认区
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="files-modal-footer">
+      <button type="button" class="files-btn" id="filesExportCancelBtn">取消</button>
+      <button type="button" class="files-btn files-btn-primary" id="filesExportConfirmBtn">确认导出</button>
+    </div>
+  </div>
+</div>
+<div class="files-toast" id="filesToast">
+  <div class="files-toast-message" id="filesToastMessage"></div>
+  <div class="files-toast-sub" id="filesToastSub"></div>
+</div>
+<div class="file-ai-assistant" id="fileAiAssistant">
+  <div class="file-ai-assistant-header" id="fileAiAssistantHeader">
+    <div class="file-ai-assistant-title">AI文件编辑助手</div>
+    <button type="button" class="file-ai-assistant-toggle" id="fileAiAssistantToggle">−</button>
+  </div>
+  <div class="file-ai-assistant-body">
+    <div class="file-ai-assistant-dialog" id="fileAiAssistantDialog">
+      <div class="file-ai-message file-ai-message-user">
+        帮我修改合同中的课程费用条款
+      </div>
+      <div class="file-ai-message file-ai-message-assistant">
+        已识别需求：编辑合同费用条款。请确认修改方向：1. 调整费用金额；2. 补充费用支付周期；3. 新增优惠说明。你可直接描述具体修改内容，我将同步更新合同文本。
+      </div>
+    </div>
+    <div class="file-ai-assistant-input">
+      <input type="text" id="fileAiAssistantInput" placeholder="请输入编辑需求，如“修改付款方式为分期付款”">
+      <button type="button" class="file-ai-assistant-send" id="fileAiAssistantSend">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 4l16 8-16 8 4-8z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+var leads = [];
+var filteredLeads = leads.slice();
+var supabaseClient = null;
+var SUPABASE_URL = "https://vvrokpefmojngpoxvsan.supabase.co";
+var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2cm9rcGVmbW9qbmdwb3h2c2FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4MzUzNTIsImV4cCI6MjA4MzQxMTM1Mn0.t-tHn0A7uzizGEytzeaNvz-i5BGL9sqq-yGOvGE2crQ";
+var selectedIds = new Set();
+var currentPage = 1;
+var pageSize = 10;
+var currentSortField = "";
+var currentSortOrder = "";
+var tbody = document.getElementById("leadsTbody");
+var paginationInfo = document.getElementById("paginationInfo");
+var pageNumbers = document.getElementById("pageNumbers");
+var prevPageBtn = document.getElementById("prevPageBtn");
+var nextPageBtn = document.getElementById("nextPageBtn");
+var selectAllCheckbox = document.getElementById("selectAll");
+var aiDrawerMask = document.getElementById("aiDrawerMask");
+var aiDrawerCloseBtn = document.getElementById("aiDrawerCloseBtn");
+var aiAssistantBtn = document.getElementById("aiAssistantBtn");
+var dashboardAiBtn = document.getElementById("dashboardAiBtn");
+var aiIframe = document.getElementById("aiIframe");
+var aiIframeLoading = document.getElementById("aiIframeLoading");
+var aiIframeError = document.getElementById("aiIframeError");
+var leadsAiIframeUrl = "http://localhost/chat/6s6rFKYGotx4wBHh";
+var dashboardAiIframeUrl = "http://localhost/chat/8rryBWLbiWYoTxNn";
+var sideMenu = document.getElementById("sideMenu");
+var pageHeaderTitle = document.getElementById("pageHeaderTitle");
+var viewLeads = document.getElementById("viewLeads");
+var viewDashboard = document.getElementById("viewDashboard");
+var viewFiles = document.getElementById("viewFiles");
+var viewFileDetail = document.getElementById("viewFileDetail");
+var viewTemplateFiles = document.getElementById("viewTemplateFiles");
+var viewTemplateDetail = document.getElementById("viewTemplateDetail");
+var viewCommunications = document.getElementById("viewCommunications");
+var fileDetailBack = document.getElementById("fileDetailBack");
+var templateDetailBack = document.getElementById("templateDetailBack");
+var fileDetailTitle = document.querySelector(".file-detail-title");
+var templateDetailTitle = document.getElementById("templateDetailTitle");
+var templateDetailMeta = document.getElementById("templateDetailMeta");
+var templateDetailLoading = document.getElementById("templateDetailLoading");
+var templateSaveBtn = document.getElementById("templateSaveBtn");
+var templateSaveBtnText = document.getElementById("templateSaveBtnText");
+var templateTextEditor = document.getElementById("templateTextEditor");
+var templateTextCount = document.getElementById("templateTextCount");
+var templateTextError = document.getElementById("templateTextError");
+var templateUploadBtn = document.getElementById("templateUploadBtn");
+var templateUploadInput = document.getElementById("templateUploadInput");
+var templateAttachmentsList = document.getElementById("templateAttachmentsList");
+var templatePreviewBtn = document.getElementById("templatePreviewBtn");
+var templatePreviewContainer = document.getElementById("templatePreviewContainer");
+var templatePreviewClose = document.getElementById("templatePreviewClose");
+var templatePreviewContent = document.getElementById("templatePreviewContent");
+var filesToast = document.getElementById("filesToast");
+var filesToastMessage = document.getElementById("filesToastMessage");
+var filesToastSub = document.getElementById("filesToastSub");
+var fileAiAssistant = document.getElementById("fileAiAssistant");
+var fileAiAssistantHeader = document.getElementById("fileAiAssistantHeader");
+var fileAiAssistantToggle = document.getElementById("fileAiAssistantToggle");
+var dashboardChartCanvas = document.getElementById("dashboardChartCanvas");
+var dashboardChartTabs = document.getElementById("dashboardChartTabs");
+var dashboardChartTooltip = document.getElementById("dashboardChartTooltip");
+var dashboardTooltipDate = document.getElementById("dashboardTooltipDate");
+var dashboardTooltipValue = document.getElementById("dashboardTooltipValue");
+var funnelChartCanvas = document.getElementById("funnelChartCanvas");
+var funnelChartTooltip = document.getElementById("funnelChartTooltip");
+var productPieChartCanvas = document.getElementById("productPieChartCanvas");
+var productPieChartTooltip = document.getElementById("productPieChartTooltip");
+var channelBarChartCanvas = document.getElementById("channelBarChartCanvas");
+var channelBarChartTooltip = document.getElementById("channelBarChartTooltip");
+var aiScoreTooltip = document.getElementById("aiScoreTooltip");
+var aiScoreTooltipAnchor = null;
+var aiScoreHoverCount = 0;
+var communicationLoading = document.getElementById("communicationLoading");
+var communicationLoaded = false;
+var dashboardActiveMetric = "sales";
+var dashboardChartPointMeta = [];
+var dashboardChartData = createDashboardChartData();
+var funnelChartData = [
+  { label: "线索获取", value: 1000 },
+  { label: "需求确认", value: 600 },
+  { label: "推产品", value: 300 },
+  { label: "成交", value: 120 }
+];
+var productPieChartData = [
+  { label: "AI课", value: 320 },
+  { label: "B端课", value: 260 },
+  { label: "C端课", value: 180 },
+  { label: "入门课", value: 140 }
+];
+var channelBarChartData = [
+  { label: "抖音", value: 0.4, display: "40%" },
+  { label: "朋友圈", value: 0.25, display: "25%" },
+  { label: "搜索引擎", value: 0.1, display: "10%" },
+  { label: "线下门店", value: 0.1, display: "10%" },
+  { label: "其他", value: 0.1, display: "10%" }
+];
+var funnelChartMeta = [];
+var productPieChartMeta = [];
+var channelBarChartMeta = [];
+var funnelActiveIndex = -1;
+var productPieActiveIndex = -1;
+var channelBarActiveIndex = -1;
+var currentAiIframeUrl = leadsAiIframeUrl;
+var files = [
+  { id: 1, name: "销售线索周报.pdf", type: "PDF", createdAt: "2024-12-10 09:30:00", updatedAt: "2024-12-10 09:30:00", creator: "系统" },
+  { id: 2, name: "季度业绩汇总.xlsx", type: "Excel", createdAt: "2024-12-08 14:20:00", updatedAt: "2024-12-09 10:15:00", creator: "销售主管" },
+  { id: 3, name: "客户跟进记录模板.docx", type: "Word", createdAt: "2024-12-05 11:05:00", updatedAt: "2024-12-05 11:05:00", creator: "运营" }
+];
+var filesFiltered = files.slice();
+var filesCurrentPage = 1;
+var filesPageSize = 10;
+var filesNextId = files.length ? files[files.length - 1].id + 1 : 1;
+var filesTbody = document.getElementById("filesTbody");
+var filesEmpty = document.getElementById("filesEmpty");
+var filesPaginationInfo = document.getElementById("filesPaginationInfo");
+var filesPaginationControls = document.getElementById("filesPaginationControls");
+var filesPageSizeSelect = document.getElementById("filesPageSize");
+var filesSearchInput = document.getElementById("filesSearchInput");
+var templateFiles = [
+  { id: 1, name: "标准培训合同模板.docx", createdAt: "2024-11-01 09:00:00", updatedAt: "2024-11-15 10:30:00", creator: "系统管理员" },
+  { id: 2, name: "销售线索周报模板.xlsx", createdAt: "2024-11-05 14:20:00", updatedAt: "2024-11-20 16:10:00", creator: "销售运营" },
+  { id: 3, name: "客户跟进记录模板.docx", createdAt: "2024-11-10 11:05:00", updatedAt: "2024-11-18 09:45:00", creator: "销售主管" }
+];
+var templateFiltered = templateFiles.slice();
+var templateCurrentPage = 1;
+var templatePageSize = 10;
+var templateSortField = "";
+var templateSortOrder = "";
+var templateTbody = document.getElementById("templateTbody");
+var templateEmpty = document.getElementById("templateEmpty");
+var templatePaginationInfo = document.getElementById("templatePaginationInfo");
+var templatePaginationControls = document.getElementById("templatePaginationControls");
+var templatePageSizeSelect = document.getElementById("templatePageSize");
+var templateSearchInput = document.getElementById("templateSearchInput");
+var filesGenerateBtn = document.getElementById("filesGenerateBtn");
+var filesModalMask = document.getElementById("filesModalMask");
+var filesNameInput = document.getElementById("filesNameInput");
+var filesTypeSelect = document.getElementById("filesTypeSelect");
+var filesCancelBtn = document.getElementById("filesCancelBtn");
+var filesConfirmBtn = document.getElementById("filesConfirmBtn");
+var filesDeleteModal = document.getElementById("filesDeleteModal");
+var filesDeleteContent = document.getElementById("filesDeleteContent");
+var filesDeleteCancelBtn = document.getElementById("filesDeleteCancelBtn");
+var filesDeleteConfirmBtn = document.getElementById("filesDeleteConfirmBtn");
+var filesPendingDeleteId = null;
+var templateAttachments = [];
+var templateDirty = false;
+function initSupabaseClient() {
+  if (!window.supabase || supabaseClient) {
+    return;
+  }
+  var supabaseUrl = SUPABASE_URL || window.SUPABASE_URL || "";
+  var supabaseAnonKey = SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY || "";
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn("Supabase 配置信息未提供，线索列表将不加载远端数据。请在 crm_leads.html 中填写 SUPABASE_URL 和 SUPABASE_ANON_KEY。");
+    return;
+  }
+  supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+}
+function fetchLeadsFromSupabase() {
+  return new Promise(function (resolve, reject) {
+    if (!supabaseClient) {
+      resolve([]);
+      return;
+    }
+    supabaseClient
+      .from("customer_leads")
+      .select("*")
+      .then(function (result) {
+        if (result.error) {
+          console.error("加载线索数据失败：", result.error);
+          resolve([]);
+          return;
+        }
+        var rows = result.data || [];
+        var mapped = rows.map(function (row, index) {
+          return {
+            id: row["线索ID"] != null ? row["线索ID"] : index + 1,
+            name: row["线索ID"] || "未命名线索",
+            contact: row["客户姓名"] || "",
+            phone: row["联系电话"] || row["联系方式"] || "",
+            source: row["来源渠道"] || "",
+            createdAt: row["创建日期"] || "",
+            status: row["跟进状态"] || "新建",
+            aiScore: 100
+          };
+        });
+        resolve(mapped);
+      })
+      .catch(function (error) {
+        console.error("请求 Supabase 发生异常：", error);
+        resolve([]);
+      });
+  });
+}
+function showToast(message, sub) {
+  if (!filesToast || !filesToastMessage || !filesToastSub) {
+    return;
+  }
+  filesToastMessage.textContent = message || "";
+  filesToastSub.textContent = sub || "";
+  filesToast.classList.add("files-toast-show");
+  setTimeout(function () {
+    filesToast.classList.remove("files-toast-show");
+  }, 2000);
+}
+function assignAiScores(list) {
+  var scores = [];
+  for (var i = 1; i <= 99; i++) {
+    scores.push(i);
+  }
+  for (var j = scores.length - 1; j > 0; j--) {
+    var randIndex = Math.floor(Math.random() * (j + 1));
+    var temp = scores[j];
+    scores[j] = scores[randIndex];
+    scores[randIndex] = temp;
+  }
+  for (var k = 0; k < list.length; k++) {
+    list[k].aiScore = scores[k];
+  }
+}
+function getAiScoreLevelClass(score) {
+  if (score <= 33) {
+    return "ai-score-low";
+  }
+  if (score <= 66) {
+    return "ai-score-medium";
+  }
+  return "ai-score-high";
+}
+function showAiScoreTooltip(anchor) {
+  aiScoreTooltipAnchor = anchor;
+  aiScoreTooltip.classList.add("visible");
+  positionAiScoreTooltip();
+}
+function hideAiScoreTooltip() {
+  aiScoreTooltipAnchor = null;
+  aiScoreTooltip.classList.remove("visible");
+}
+function positionAiScoreTooltip() {
+  if (!aiScoreTooltipAnchor || !aiScoreTooltip.classList.contains("visible")) {
+    return;
+  }
+  var rect = aiScoreTooltipAnchor.getBoundingClientRect();
+  var tooltipWidth = aiScoreTooltip.offsetWidth || 280;
+  var tooltipHeight = aiScoreTooltip.offsetHeight || 0;
+  var centerX = rect.left + rect.width / 2;
+  var left = centerX - tooltipWidth / 2;
+  var bottom = rect.top - 10;
+  var top = bottom - tooltipHeight;
+  var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+  if (left < 8) {
+    left = 8;
+  }
+  if (left + tooltipWidth > viewportWidth - 8) {
+    left = viewportWidth - 8 - tooltipWidth;
+  }
+  if (top < 8) {
+    top = rect.bottom + 10;
+  }
+  aiScoreTooltip.style.left = left + "px";
+  aiScoreTooltip.style.top = top + "px";
+}
+function handleAiScoreEnter(event) {
+  aiScoreHoverCount++;
+  showAiScoreTooltip(event.currentTarget);
+}
+function handleAiScoreLeave() {
+  aiScoreHoverCount--;
+  if (aiScoreHoverCount <= 0) {
+    hideAiScoreTooltip();
+  }
+}
+if (aiScoreTooltip) {
+  aiScoreTooltip.addEventListener("mouseenter", function () {
+    aiScoreHoverCount++;
+  });
+  aiScoreTooltip.addEventListener("mouseleave", function () {
+    aiScoreHoverCount--;
+    if (aiScoreHoverCount <= 0) {
+      hideAiScoreTooltip();
+    }
+  });
+}
+window.addEventListener("scroll", function () {
+  if (aiScoreTooltipAnchor && aiScoreTooltip.classList.contains("visible")) {
+    positionAiScoreTooltip();
+  }
+});
+function parseDate(str) {
+  return new Date(str.replace(/-/g, "/"));
+}
+function applyFilters() {
+  var startDateInput = document.getElementById("startDate").value;
+  var endDateInput = document.getElementById("endDate").value;
+  var source = document.getElementById("sourceSelect").value;
+  var status = document.getElementById("statusSelect").value;
+  filteredLeads = leads.filter(function (item) {
+    var match = true;
+    if (startDateInput) {
+      var start = new Date(startDateInput + " 00:00:00");
+      match = match && parseDate(item.createdAt) >= start;
+    }
+    if (endDateInput) {
+      var end = new Date(endDateInput + " 23:59:59");
+      match = match && parseDate(item.createdAt) <= end;
+    }
+    if (source) {
+      match = match && item.source === source;
+    }
+    if (status) {
+      match = match && item.status === status;
+    }
+    return match;
+  });
+}
+function applySort() {
+  if (!currentSortField || !currentSortOrder) {
+    return;
+  }
+  filteredLeads.sort(function (a, b) {
+    var v1 = a[currentSortField];
+    var v2 = b[currentSortField];
+    if (currentSortField === "createdAt") {
+      v1 = parseDate(v1).getTime();
+      v2 = parseDate(v2).getTime();
+    }
+    if (v1 < v2) {
+      return currentSortOrder === "asc" ? -1 : 1;
+    }
+    if (v1 > v2) {
+      return currentSortOrder === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
+}
+function applyTemplateSort() {
+  if (!templateSortField || !templateSortOrder) {
+    return;
+  }
+  templateFiltered.sort(function (a, b) {
+    var v1 = a[templateSortField];
+    var v2 = b[templateSortField];
+    if (templateSortField === "createdAt" || templateSortField === "updatedAt") {
+      v1 = parseDate(v1).getTime();
+      v2 = parseDate(v2).getTime();
+    }
+    if (v1 < v2) {
+      return templateSortOrder === "asc" ? -1 : 1;
+    }
+    if (v1 > v2) {
+      return templateSortOrder === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
+}
+function showFileAiAssistant() {
+  if (!fileAiAssistant) {
+    return;
+  }
+  fileAiAssistant.style.display = "flex";
+  fileAiAssistant.classList.remove("file-ai-assistant-collapsed");
+}
+function hideFileAiAssistant() {
+  if (!fileAiAssistant) {
+    return;
+  }
+  fileAiAssistant.style.display = "none";
+  fileAiAssistant.classList.remove("file-ai-assistant-collapsed");
+}
+function showTemplateDetail(template) {
+  if (!viewTemplateFiles || !viewTemplateDetail) {
+    return;
+  }
+  viewTemplateFiles.style.display = "none";
+  viewTemplateDetail.classList.add("visible");
+  if (templateDetailTitle && template && template.name) {
+    templateDetailTitle.textContent = template.name;
+  }
+  if (templateDetailMeta && template) {
+    templateDetailMeta.textContent =
+      "创建时间：" +
+      template.createdAt +
+      " ｜ 文件创建人：" +
+      template.creator +
+      " ｜ 文件修改时间：" +
+      template.updatedAt;
+  }
+   templateDirty = false;
+   templateAttachments = [];
+   if (templateAttachmentsList) {
+     templateAttachmentsList.innerHTML = "";
+   }
+   if (templateTextEditor) {
+     templateTextEditor.textContent = "";
+   }
+   if (templateTextError) {
+     templateTextError.textContent = "";
+   }
+   if (templateTextCount) {
+     templateTextCount.textContent = "0 字";
+   }
+   if (templateSaveBtn) {
+     templateSaveBtn.classList.add("template-save-btn-disabled");
+   }
+  if (templateDetailLoading) {
+    templateDetailLoading.style.display = "flex";
+    setTimeout(function () {
+      templateDetailLoading.style.display = "none";
+    }, 300);
+  }
+  requestAnimationFrame(function () {
+    viewTemplateDetail.classList.add("enter-active");
+  });
+}
+function hideTemplateDetail() {
+  if (!viewTemplateFiles || !viewTemplateDetail) {
+    return;
+  }
+  viewTemplateDetail.classList.remove("enter-active");
+  setTimeout(function () {
+    viewTemplateDetail.classList.remove("visible");
+    viewTemplateFiles.style.display = "block";
+  }, 200);
+}
+function showFileDetail(file) {
+  if (!viewFiles || !viewFileDetail) {
+    return;
+  }
+  viewFiles.style.display = "none";
+  viewFileDetail.classList.add("visible");
+  if (fileDetailTitle && file && file.name) {
+    fileDetailTitle.textContent = file.name;
+  }
+  requestAnimationFrame(function () {
+    viewFileDetail.classList.add("enter-active");
+  });
+  showFileAiAssistant();
+}
+function hideFileDetail() {
+  if (!viewFiles || !viewFileDetail) {
+    return;
+  }
+  viewFileDetail.classList.remove("enter-active");
+  setTimeout(function () {
+    viewFileDetail.classList.remove("visible");
+    viewFiles.style.display = "block";
+  }, 200);
+  hideFileAiAssistant();
+}
+function renderFilesTable() {
+  if (!filesTbody || !filesPaginationInfo || !filesPaginationControls || !filesEmpty) {
+    return;
+  }
+  filesTbody.innerHTML = "";
+  var total = filesFiltered.length;
+  var totalPages = Math.max(1, Math.ceil(total / filesPageSize));
+  if (filesCurrentPage > totalPages) {
+    filesCurrentPage = totalPages;
+  }
+  var startIndex = (filesCurrentPage - 1) * filesPageSize;
+  var endIndex = Math.min(startIndex + filesPageSize, total);
+  if (total === 0) {
+    filesEmpty.style.display = "flex";
+  } else {
+    filesEmpty.style.display = "none";
+  }
+  var pageData = filesFiltered.slice(startIndex, endIndex);
+  pageData.forEach(function (item) {
+    var tr = document.createElement("tr");
+    var tdCreatedAt = document.createElement("td");
+    tdCreatedAt.className = "files-col-created-at";
+    tdCreatedAt.textContent = item.createdAt;
+    tr.appendChild(tdCreatedAt);
+    var tdName = document.createElement("td");
+    tdName.className = "files-col-name";
+    var nameSpan = document.createElement("span");
+    nameSpan.className = "files-name-link files-name-text";
+    nameSpan.textContent = item.name;
+    nameSpan.title = item.name;
+    nameSpan.addEventListener("click", function () {
+      showFileDetail(item);
+    });
+    tdName.appendChild(nameSpan);
+    tr.appendChild(tdName);
+    var tdType = document.createElement("td");
+    tdType.className = "files-col-type";
+    var typeWrapper = document.createElement("div");
+    typeWrapper.className = "files-type";
+    var typeIcon = document.createElement("span");
+    typeIcon.className = "files-type-icon";
+    typeIcon.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<path d="M6 3h7l5 5v13H6z"></path>' +
+      '<path d="M13 3v5h5"></path>' +
+      "</svg>";
+    var typeText = document.createElement("span");
+    typeText.textContent = item.type;
+    typeWrapper.appendChild(typeIcon);
+    typeWrapper.appendChild(typeText);
+    tdType.appendChild(typeWrapper);
+    tr.appendChild(tdType);
+    var tdUpdatedAt = document.createElement("td");
+    tdUpdatedAt.className = "files-col-updated-at";
+    tdUpdatedAt.textContent = item.updatedAt;
+    tr.appendChild(tdUpdatedAt);
+    var tdCreator = document.createElement("td");
+    tdCreator.className = "files-col-creator";
+    tdCreator.textContent = item.creator;
+    tr.appendChild(tdCreator);
+    var tdActions = document.createElement("td");
+    tdActions.className = "files-col-actions";
+    var actionsWrapper = document.createElement("div");
+    actionsWrapper.className = "files-actions";
+    var downloadBtn = document.createElement("button");
+    downloadBtn.type = "button";
+    downloadBtn.className = "files-action-btn files-action-download";
+    downloadBtn.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<path d="M12 3v12"></path>' +
+      '<path d="M8 11l4 4 4-4"></path>' +
+      '<path d="M5 19h14"></path>' +
+      "</svg>";
+    downloadBtn.addEventListener("click", function () {
+      alert("模拟下载文件：" + item.name);
+    });
+    var deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "files-action-btn files-action-delete";
+    deleteBtn.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<path d="M9 4h6"></path>' +
+      '<path d="M4 7h16"></path>' +
+      '<path d="M9 7v11"></path>' +
+      '<path d="M15 7v11"></path>' +
+      '<path d="M6 7l1 13h10l1-13"></path>' +
+      "</svg>";
+    deleteBtn.addEventListener("click", function () {
+      filesPendingDeleteId = item.id;
+      if (filesDeleteModal && filesDeleteContent && filesModalMask) {
+        filesDeleteContent.textContent = "确定要删除文件「" + item.name + "」吗？";
+        filesModalMask.style.display = "flex";
+        filesDeleteModal.style.display = "block";
+      }
+    });
+    actionsWrapper.appendChild(downloadBtn);
+    actionsWrapper.appendChild(deleteBtn);
+    tdActions.appendChild(actionsWrapper);
+    tr.appendChild(tdActions);
+    filesTbody.appendChild(tr);
+  });
+  filesPaginationInfo.textContent =
+    "共 " + total + " 个文件，第 " + filesCurrentPage + " / " + totalPages + " 页";
+  renderFilesPaginationControls(totalPages);
+}
+function renderTemplateTable() {
+  if (!templateTbody || !templatePaginationInfo || !templatePaginationControls || !templateEmpty) {
+    return;
+  }
+  templateTbody.innerHTML = "";
+  var total = templateFiltered.length;
+  var totalPages = Math.max(1, Math.ceil(total / templatePageSize));
+  if (templateCurrentPage > totalPages) {
+    templateCurrentPage = totalPages;
+  }
+  var startIndex = (templateCurrentPage - 1) * templatePageSize;
+  var endIndex = Math.min(startIndex + templatePageSize, total);
+  if (total === 0) {
+    templateEmpty.style.display = "flex";
+  } else {
+    templateEmpty.style.display = "none";
+  }
+  var pageData = templateFiltered.slice(startIndex, endIndex);
+  pageData.forEach(function (item) {
+    var tr = document.createElement("tr");
+    var tdCreatedAt = document.createElement("td");
+    tdCreatedAt.className = "files-col-created-at";
+    tdCreatedAt.textContent = item.createdAt;
+    tr.appendChild(tdCreatedAt);
+    var tdName = document.createElement("td");
+    tdName.className = "files-col-name";
+    var nameSpan = document.createElement("span");
+    nameSpan.className = "files-name-link files-name-text";
+    nameSpan.textContent = item.name;
+    nameSpan.title = item.name;
+    nameSpan.addEventListener("click", function () {
+      showTemplateDetail(item);
+    });
+    tdName.appendChild(nameSpan);
+    tr.appendChild(tdName);
+    var tdUpdatedAt = document.createElement("td");
+    tdUpdatedAt.className = "files-col-updated-at";
+    tdUpdatedAt.textContent = item.updatedAt;
+    tr.appendChild(tdUpdatedAt);
+    var tdCreator = document.createElement("td");
+    tdCreator.className = "files-col-creator";
+    tdCreator.textContent = item.creator;
+    tr.appendChild(tdCreator);
+    templateTbody.appendChild(tr);
+  });
+  templatePaginationInfo.textContent =
+    "共 " + total + " 个模板，第 " + templateCurrentPage + " / " + totalPages + " 页";
+  renderTemplatePaginationControls(totalPages);
+}
+function updateTemplateTextCount() {
+  if (!templateTextEditor || !templateTextCount) {
+    return;
+  }
+  var text = templateTextEditor.textContent || "";
+  var length = text.replace(/\s+/g, "").length;
+  templateTextCount.textContent = length + " 字";
+}
+function markTemplateDirty() {
+  templateDirty = true;
+  if (templateSaveBtn) {
+    templateSaveBtn.classList.remove("template-save-btn-disabled");
+  }
+}
+if (templateTextEditor) {
+  templateTextEditor.addEventListener("input", function () {
+    updateTemplateTextCount();
+    markTemplateDirty();
+    if (templateTextError) {
+      templateTextError.textContent = "";
+    }
+  });
+}
+function renderTemplateAttachments() {
+  if (!templateAttachmentsList) {
+    return;
+  }
+  templateAttachmentsList.innerHTML = "";
+  templateAttachments.forEach(function (file, index) {
+    var card = document.createElement("div");
+    card.className = "template-attachment-card";
+    var main = document.createElement("div");
+    main.className = "template-attachment-main";
+    var icon = document.createElement("div");
+    icon.className = "template-attachment-icon";
+    icon.textContent = "F";
+    var name = document.createElement("div");
+    name.className = "template-attachment-name";
+    name.textContent = file.name;
+    var size = document.createElement("div");
+    size.className = "template-attachment-size";
+    size.textContent = Math.max(1, Math.round(file.size / 1024)) + " KB";
+    main.appendChild(icon);
+    main.appendChild(name);
+    main.appendChild(size);
+    var footer = document.createElement("div");
+    footer.className = "template-attachment-footer";
+    var placeholder = document.createElement("div");
+    placeholder.textContent = "";
+    var delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "template-attachment-delete";
+    delBtn.textContent = "移除";
+    delBtn.addEventListener("click", function () {
+      templateAttachments.splice(index, 1);
+      renderTemplateAttachments();
+      markTemplateDirty();
+    });
+    footer.appendChild(placeholder);
+    footer.appendChild(delBtn);
+    card.appendChild(main);
+    card.appendChild(footer);
+    templateAttachmentsList.appendChild(card);
+  });
+}
+function handleTemplateFilesSelected(fileList) {
+  if (!fileList || !fileList.length) {
+    return;
+  }
+  for (var i = 0; i < fileList.length; i++) {
+    templateAttachments.push(fileList[i]);
+  }
+  renderTemplateAttachments();
+  markTemplateDirty();
+}
+if (templateUploadBtn && templateUploadInput) {
+  templateUploadBtn.addEventListener("click", function () {
+    templateUploadInput.click();
+  });
+  templateUploadInput.addEventListener("change", function () {
+    handleTemplateFilesSelected(Array.prototype.slice.call(templateUploadInput.files || []));
+    templateUploadInput.value = "";
+  });
+}
+if (templatePreviewBtn && templatePreviewContainer && templatePreviewContent) {
+  templatePreviewBtn.addEventListener("click", function () {
+    if (templatePreviewBtn.classList.contains("template-preview-btn-loading")) {
+      return;
+    }
+    templatePreviewBtn.classList.add("template-preview-btn-loading");
+    templatePreviewBtn.textContent = "生成中...";
+    setTimeout(function () {
+      var text = templateTextEditor ? templateTextEditor.textContent : "";
+      if (!text) {
+        text = "当前模板暂无文字内容，请先在上方填写模板文字描述。";
+      }
+      templatePreviewContent.textContent = text;
+      templatePreviewContainer.style.display = "block";
+      templatePreviewBtn.classList.remove("template-preview-btn-loading");
+      templatePreviewBtn.textContent = "测试生成预览";
+    }, 500);
+  });
+}
+if (templatePreviewClose && templatePreviewContainer) {
+  templatePreviewClose.addEventListener("click", function () {
+    templatePreviewContainer.style.display = "none";
+  });
+}
+if (templateSaveBtn && templateSaveBtnText) {
+  templateSaveBtn.addEventListener("click", function () {
+    if (templateSaveBtn.classList.contains("template-save-btn-disabled")) {
+      return;
+    }
+    if (templateSaveBtn.classList.contains("template-save-btn-loading")) {
+      return;
+    }
+    var text = templateTextEditor ? (templateTextEditor.textContent || "").trim() : "";
+    if (!text) {
+      if (templateTextError) {
+        templateTextError.textContent = "请先输入模板文字描述后再保存。";
+      }
+      return;
+    }
+    templateSaveBtn.classList.add("template-save-btn-loading");
+    templateSaveBtnText.textContent = "保存中...";
+    setTimeout(function () {
+      templateSaveBtn.classList.remove("template-save-btn-loading");
+      templateSaveBtn.classList.add("template-save-btn-disabled");
+      templateSaveBtnText.textContent = "保存";
+      templateDirty = false;
+      showToast("模板已保存", "当前模板文字与附件配置已生效");
+    }, 800);
+  });
+}
+function renderFilesPaginationControls(totalPages) {
+  if (!filesPaginationControls) {
+    return;
+  }
+  filesPaginationControls.innerHTML = "";
+  if (totalPages < 1) {
+    return;
+  }
+  var prevBtn = document.createElement("button");
+  prevBtn.textContent = "上一页";
+  prevBtn.disabled = filesCurrentPage === 1;
+  prevBtn.addEventListener("click", function () {
+    if (filesCurrentPage > 1) {
+      filesCurrentPage -= 1;
+      renderFilesTable();
+    }
+  });
+  filesPaginationControls.appendChild(prevBtn);
+  for (var i = 1; i <= totalPages; i++) {
+    var pageBtn = document.createElement("button");
+    pageBtn.textContent = i;
+    if (i === filesCurrentPage) {
+      pageBtn.classList.add("active");
+    }
+    pageBtn.addEventListener(
+      "click",
+      (function (page) {
+        return function () {
+          filesCurrentPage = page;
+          renderFilesTable();
+        };
+      })(i)
+    );
+    filesPaginationControls.appendChild(pageBtn);
+  }
+  var nextBtn = document.createElement("button");
+  nextBtn.textContent = "下一页";
+  nextBtn.disabled = filesCurrentPage === totalPages || totalPages === 0;
+  nextBtn.addEventListener("click", function () {
+    if (filesCurrentPage < totalPages) {
+      filesCurrentPage += 1;
+      renderFilesTable();
+    }
+  });
+  filesPaginationControls.appendChild(nextBtn);
+}
+function renderTemplatePaginationControls(totalPages) {
+  if (!templatePaginationControls) {
+    return;
+  }
+  templatePaginationControls.innerHTML = "";
+  if (totalPages < 1) {
+    return;
+  }
+  var prevBtn = document.createElement("button");
+  prevBtn.textContent = "上一页";
+  prevBtn.disabled = templateCurrentPage === 1;
+  prevBtn.addEventListener("click", function () {
+    if (templateCurrentPage > 1) {
+      templateCurrentPage -= 1;
+      renderTemplateTable();
+    }
+  });
+  templatePaginationControls.appendChild(prevBtn);
+  for (var i = 1; i <= totalPages; i++) {
+    var pageBtn = document.createElement("button");
+    pageBtn.textContent = i;
+    if (i === templateCurrentPage) {
+      pageBtn.classList.add("active");
+    }
+    pageBtn.addEventListener(
+      "click",
+      (function (page) {
+        return function () {
+          templateCurrentPage = page;
+          renderTemplateTable();
+        };
+      })(i)
+    );
+    templatePaginationControls.appendChild(pageBtn);
+  }
+  var nextBtn = document.createElement("button");
+  nextBtn.textContent = "下一页";
+  nextBtn.disabled = templateCurrentPage === totalPages || totalPages === 0;
+  nextBtn.addEventListener("click", function () {
+    if (templateCurrentPage < totalPages) {
+      templateCurrentPage += 1;
+      renderTemplateTable();
+    }
+  });
+  templatePaginationControls.appendChild(nextBtn);
+}
+function applyFilesFilter() {
+  var keyword = filesSearchInput ? filesSearchInput.value.trim() : "";
+  if (!keyword) {
+    filesFiltered = files.slice();
+  } else {
+    filesFiltered = files.filter(function (item) {
+      return item.name.indexOf(keyword) !== -1;
+    });
+  }
+  filesCurrentPage = 1;
+  renderFilesTable();
+}
+function openFilesCreateModal() {
+  if (!filesModalMask || !filesNameInput || !filesTypeSelect || !filesDeleteModal) {
+    return;
+  }
+  filesPendingDeleteId = null;
+  filesDeleteModal.style.display = "none";
+  filesNameInput.value = "";
+  filesTypeSelect.value = "PDF";
+  filesModalMask.style.display = "flex";
+}
+function closeFilesModal() {
+  if (!filesModalMask || !filesDeleteModal) {
+    return;
+  }
+  filesModalMask.style.display = "none";
+  filesDeleteModal.style.display = "none";
+  filesPendingDeleteId = null;
+}
+function handleFilesCreateConfirm() {
+  if (!filesNameInput || !filesTypeSelect) {
+    return;
+  }
+  var name = filesNameInput.value.trim();
+  var type = filesTypeSelect.value || "PDF";
+  if (!name) {
+    alert("请输入文件名");
+    return;
+  }
+  var now = new Date();
+  var year = now.getFullYear();
+  var month = String(now.getMonth() + 1).padStart(2, "0");
+  var day = String(now.getDate()).padStart(2, "0");
+  var hour = String(now.getHours()).padStart(2, "0");
+  var minute = String(now.getMinutes()).padStart(2, "0");
+  var second = String(now.getSeconds()).padStart(2, "0");
+  var timeStr = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+  var newFile = {
+    id: filesNextId++,
+    name: name,
+    type: type,
+    createdAt: timeStr,
+    updatedAt: timeStr,
+    creator: "当前用户"
+  };
+  files.unshift(newFile);
+  applyFilesFilter();
+  closeFilesModal();
+}
+function handleFilesDeleteConfirm() {
+  if (filesPendingDeleteId == null) {
+    closeFilesModal();
+    return;
+  }
+  files = files.filter(function (item) {
+    return item.id !== filesPendingDeleteId;
+  });
+  applyFilesFilter();
+  closeFilesModal();
+}
+function renderTable() {
+  tbody.innerHTML = "";
+  var total = filteredLeads.length;
+  var totalPages = Math.max(1, Math.ceil(total / pageSize));
+  if (currentPage > totalPages) {
+    currentPage = totalPages;
+  }
+  var startIndex = (currentPage - 1) * pageSize;
+  var endIndex = Math.min(startIndex + pageSize, total);
+  var pageData = filteredLeads.slice(startIndex, endIndex);
+  pageData.forEach(function (item) {
+    var tr = document.createElement("tr");
+    var tdSelect = document.createElement("td");
+    var checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = selectedIds.has(item.id);
+    checkbox.addEventListener("change", function () {
+      if (checkbox.checked) {
+        selectedIds.add(item.id);
+      } else {
+        selectedIds.delete(item.id);
+      }
+      updateSelectAllState();
+    });
+    tdSelect.appendChild(checkbox);
+    tr.appendChild(tdSelect);
+    var tdName = document.createElement("td");
+    tdName.textContent = item.name;
+    tr.appendChild(tdName);
+    var tdContact = document.createElement("td");
+    tdContact.textContent = item.contact;
+    tr.appendChild(tdContact);
+    var tdPhone = document.createElement("td");
+    tdPhone.textContent = item.phone;
+    tr.appendChild(tdPhone);
+    var tdSource = document.createElement("td");
+    tdSource.textContent = item.source;
+    tr.appendChild(tdSource);
+    var tdCreatedAt = document.createElement("td");
+    tdCreatedAt.textContent = item.createdAt;
+    tr.appendChild(tdCreatedAt);
+    var tdStatus = document.createElement("td");
+    var badge = document.createElement("span");
+    badge.className = "status-badge " + (item.status === "新建" ? "status-new" : item.status === "跟进中" ? "status-following" : "status-converted");
+    badge.textContent = item.status;
+    tdStatus.appendChild(badge);
+    tr.appendChild(tdStatus);
+    var tdAiScore = document.createElement("td");
+    tdAiScore.className = "ai-score-col";
+    var scoreValue = typeof item.aiScore === "number" ? item.aiScore : 0;
+    var scoreTag = document.createElement("span");
+    scoreTag.className = "ai-score-tag " + getAiScoreLevelClass(scoreValue);
+    scoreTag.textContent = scoreValue + "分";
+    scoreTag.addEventListener("mouseenter", handleAiScoreEnter);
+    scoreTag.addEventListener("mouseleave", handleAiScoreLeave);
+    tdAiScore.appendChild(scoreTag);
+    tr.appendChild(tdAiScore);
+    tbody.appendChild(tr);
+  });
+  paginationInfo.textContent = "共 " + total + " 条线索，第 " + currentPage + " / " + totalPages + " 页";
+  renderPaginationButtons(totalPages);
+  updateSelectAllState();
+}
+function renderPaginationButtons(totalPages) {
+  pageNumbers.innerHTML = "";
+  for (var i = 1; i <= totalPages; i++) {
+    var btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === currentPage) {
+      btn.classList.add("active");
+    }
+    btn.addEventListener("click", (function (page) {
+      return function () {
+        currentPage = page;
+        renderTable();
+      };
+    })(i));
+    pageNumbers.appendChild(btn);
+  }
+  prevPageBtn.disabled = currentPage === 1;
+  nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+}
+function updateSelectAllState() {
+  var total = filteredLeads.length;
+  var startIndex = (currentPage - 1) * pageSize;
+  var endIndex = Math.min(startIndex + pageSize, total);
+  var pageData = filteredLeads.slice(startIndex, endIndex);
+  if (pageData.length === 0) {
+    selectAllCheckbox.checked = false;
+    selectAllCheckbox.indeterminate = false;
+    return;
+  }
+  var selectedCount = pageData.filter(function (item) {
+    return selectedIds.has(item.id);
+  }).length;
+  if (selectedCount === 0) {
+    selectAllCheckbox.checked = false;
+    selectAllCheckbox.indeterminate = false;
+  } else if (selectedCount === pageData.length) {
+    selectAllCheckbox.checked = true;
+    selectAllCheckbox.indeterminate = false;
+  } else {
+    selectAllCheckbox.checked = false;
+    selectAllCheckbox.indeterminate = true;
+  }
+}
+document.getElementById("searchBtn").addEventListener("click", function () {
+  applyFilters();
+  currentPage = 1;
+  applySort();
+  renderTable();
+});
+document.getElementById("resetBtn").addEventListener("click", function () {
+  document.getElementById("startDate").value = "";
+  document.getElementById("endDate").value = "";
+  document.getElementById("sourceSelect").value = "";
+  document.getElementById("statusSelect").value = "";
+  filteredLeads = leads.slice();
+  currentPage = 1;
+  currentSortField = "";
+  currentSortOrder = "";
+  renderTable();
+});
+prevPageBtn.addEventListener("click", function () {
+  if (currentPage > 1) {
+    currentPage -= 1;
+    renderTable();
+  }
+});
+nextPageBtn.addEventListener("click", function () {
+  var totalPages = Math.max(1, Math.ceil(filteredLeads.length / pageSize));
+  if (currentPage < totalPages) {
+    currentPage += 1;
+    renderTable();
+  }
+});
+selectAllCheckbox.addEventListener("change", function () {
+  var checked = selectAllCheckbox.checked;
+  var total = filteredLeads.length;
+  var startIndex = (currentPage - 1) * pageSize;
+  var endIndex = Math.min(startIndex + pageSize, total);
+  var pageData = filteredLeads.slice(startIndex, endIndex);
+  pageData.forEach(function (item) {
+    if (checked) {
+      selectedIds.add(item.id);
+    } else {
+      selectedIds.delete(item.id);
+    }
+  });
+  renderTable();
+});
+Array.prototype.forEach.call(document.querySelectorAll("#viewLeads th.sortable"), function (th) {
+  th.addEventListener("click", function () {
+    var field = th.getAttribute("data-field");
+    if (!field) {
+      return;
+    }
+    if (currentSortField === field) {
+      currentSortOrder = currentSortOrder === "asc" ? "desc" : currentSortOrder === "desc" ? "" : "asc";
+    } else {
+      currentSortField = field;
+      currentSortOrder = "asc";
+    }
+    applySort();
+    renderTable();
+  });
+});
+var templateCreatedTh = document.querySelector("#templateFilesTable .files-col-created-at");
+var templateUpdatedTh = document.querySelector("#templateFilesTable .files-col-updated-at");
+function handleTemplateSortClick(field) {
+  if (templateSortField === field) {
+    templateSortOrder = templateSortOrder === "asc" ? "desc" : templateSortOrder === "desc" ? "" : "asc";
+  } else {
+    templateSortField = field;
+    templateSortOrder = "asc";
+  }
+  applyTemplateSort();
+  renderTemplateTable();
+}
+if (templateCreatedTh) {
+  templateCreatedTh.classList.add("sortable");
+  templateCreatedTh.setAttribute("data-field", "createdAt");
+  templateCreatedTh.addEventListener("click", function () {
+    handleTemplateSortClick("createdAt");
+  });
+}
+if (templateUpdatedTh) {
+  templateUpdatedTh.classList.add("sortable");
+  templateUpdatedTh.setAttribute("data-field", "updatedAt");
+  templateUpdatedTh.addEventListener("click", function () {
+    handleTemplateSortClick("updatedAt");
+  });
+}
+document.getElementById("addLeadBtn").addEventListener("click", function () {
+  alert("点击：增加线索（此示例为前端静态展示，可在此对接表单弹窗或跳转）");
+});
+document.getElementById("exportBtn").addEventListener("click", function () {
+  alert("点击：导出线索（此示例为前端静态展示，可在此对接导出接口）");
+});
+document.getElementById("convertBtn").addEventListener("click", function () {
+  if (selectedIds.size === 0) {
+    alert("请先勾选需要转化的线索");
+    return;
+  }
+  alert("点击：转化为客户，已选择 " + selectedIds.size + " 条线索");
+});
+initSupabaseClient();
+fetchLeadsFromSupabase().then(function (remoteLeads) {
+  if (remoteLeads && remoteLeads.length) {
+    leads = remoteLeads;
+    filteredLeads = leads.slice();
+  } else {
+    leads = [];
+    filteredLeads = [];
+  }
+  currentPage = 1;
+  renderTable();
+});
+if (filesSearchInput) {
+  filesSearchInput.addEventListener("input", function () {
+    applyFilesFilter();
+  });
+}
+if (templateSearchInput) {
+  templateSearchInput.addEventListener("input", function () {
+    var keyword = templateSearchInput.value.trim();
+    if (!keyword) {
+      templateFiltered = templateFiles.slice();
+    } else {
+      templateFiltered = templateFiles.filter(function (item) {
+        return item.name.indexOf(keyword) !== -1;
+      });
+    }
+    templateCurrentPage = 1;
+    applyTemplateSort();
+    renderTemplateTable();
+  });
+}
+if (filesPageSizeSelect) {
+  filesPageSizeSelect.addEventListener("change", function () {
+    var value = parseInt(filesPageSizeSelect.value, 10);
+    if (!isNaN(value) && value > 0) {
+      filesPageSize = value;
+      filesCurrentPage = 1;
+      renderFilesTable();
+    }
+  });
+}
+if (templatePageSizeSelect) {
+  templatePageSizeSelect.addEventListener("change", function () {
+    var value = parseInt(templatePageSizeSelect.value, 10);
+    if (!isNaN(value) && value > 0) {
+      templatePageSize = value;
+      templateCurrentPage = 1;
+      renderTemplateTable();
+    }
+  });
+}
+if (filesGenerateBtn) {
+  filesGenerateBtn.addEventListener("click", function () {
+    openFilesCreateModal();
+  });
+}
+if (filesCancelBtn) {
+  filesCancelBtn.addEventListener("click", function () {
+    closeFilesModal();
+  });
+}
+if (filesConfirmBtn) {
+  filesConfirmBtn.addEventListener("click", function () {
+    handleFilesCreateConfirm();
+  });
+}
+if (filesDeleteCancelBtn) {
+  filesDeleteCancelBtn.addEventListener("click", function () {
+    closeFilesModal();
+  });
+}
+if (filesDeleteConfirmBtn) {
+  filesDeleteConfirmBtn.addEventListener("click", function () {
+    handleFilesDeleteConfirm();
+  });
+}
+if (fileDetailBack) {
+  fileDetailBack.addEventListener("click", function () {
+    hideFileDetail();
+  });
+}
+if (templateDetailBack) {
+  templateDetailBack.addEventListener("click", function () {
+    hideTemplateDetail();
+  });
+}
+if (fileAiAssistantToggle && fileAiAssistant) {
+  fileAiAssistantToggle.addEventListener("click", function (event) {
+    event.stopPropagation();
+    if (fileAiAssistant.classList.contains("file-ai-assistant-collapsed")) {
+      fileAiAssistant.classList.remove("file-ai-assistant-collapsed");
+      fileAiAssistantToggle.textContent = "−";
+    } else {
+      fileAiAssistant.classList.add("file-ai-assistant-collapsed");
+      fileAiAssistantToggle.textContent = "+";
+    }
+  });
+}
+renderFilesTable();
+renderTemplateTable();
+function openAiDrawer() {
+  document.body.classList.add("ai-drawer-open");
+  aiIframeError.style.display = "none";
+  aiIframe.style.display = "none";
+  aiIframeLoading.style.display = "flex";
+  aiIframe.src = currentAiIframeUrl;
+}
+function closeAiDrawer() {
+  document.body.classList.remove("ai-drawer-open");
+  aiIframe.src = "about:blank";
+  aiIframe.style.display = "none";
+  aiIframeLoading.style.display = "none";
+  aiIframeError.style.display = "none";
+}
+aiIframe.addEventListener("load", function () {
+  aiIframeLoading.style.display = "none";
+  aiIframeError.style.display = "none";
+  aiIframe.style.display = "block";
+});
+aiIframe.addEventListener("error", function () {
+  aiIframeLoading.style.display = "none";
+  aiIframeError.style.display = "flex";
+  aiIframe.style.display = "none";
+});
+aiAssistantBtn.addEventListener("click", function () {
+  currentAiIframeUrl = leadsAiIframeUrl;
+  openAiDrawer();
+});
+if (dashboardAiBtn) {
+  dashboardAiBtn.addEventListener("click", function () {
+    currentAiIframeUrl = dashboardAiIframeUrl;
+    openAiDrawer();
+  });
+}
+aiDrawerCloseBtn.addEventListener("click", function () {
+  closeAiDrawer();
+});
+aiDrawerMask.addEventListener("click", function (event) {
+  if (event.target === aiDrawerMask) {
+    closeAiDrawer();
+  }
+});
+sideMenu.addEventListener("click", function (event) {
+  var target = event.target;
+  while (target && target !== sideMenu && !target.classList.contains("menu-item")) {
+    target = target.parentNode;
+  }
+  if (!target || !target.classList.contains("menu-item")) {
+    return;
+  }
+  var view = target.getAttribute("data-view");
+  if (!view) {
+    return;
+  }
+  var items = sideMenu.querySelectorAll(".menu-item");
+  for (var i = 0; i < items.length; i++) {
+    items[i].classList.remove("active");
+  }
+  target.classList.add("active");
+  if (viewFileDetail) {
+    viewFileDetail.classList.remove("enter-active");
+    viewFileDetail.classList.remove("visible");
+  }
+  hideFileAiAssistant();
+  var submenuItems = sideMenu.querySelectorAll(".submenu-item[data-parent=\"files\"]");
+  if (view === "files") {
+    Array.prototype.forEach.call(submenuItems, function (item) {
+      item.style.display = item.style.display === "none" ? "block" : "none";
+    });
+  }
+  if (view === "leads") {
+    pageHeaderTitle.textContent = "线索管理";
+    viewLeads.style.display = "block";
+    viewDashboard.style.display = "none";
+    viewFiles.style.display = "none";
+    if (viewTemplateFiles) {
+      viewTemplateFiles.style.display = "none";
+    }
+    viewCommunications.style.display = "none";
+  } else if (view === "dashboard") {
+    pageHeaderTitle.textContent = "数据看板";
+    viewLeads.style.display = "none";
+    viewDashboard.style.display = "block";
+    viewFiles.style.display = "none";
+    if (viewTemplateFiles) {
+      viewTemplateFiles.style.display = "none";
+    }
+    viewCommunications.style.display = "none";
+    renderDashboardChart();
+    renderFunnelChart();
+    renderProductPieChart();
+    renderChannelBarChart();
+  } else if (view === "customers") {
+    pageHeaderTitle.textContent = "客户管理";
+    viewLeads.style.display = "none";
+    viewDashboard.style.display = "none";
+    viewFiles.style.display = "none";
+    if (viewTemplateFiles) {
+      viewTemplateFiles.style.display = "none";
+    }
+    viewCommunications.style.display = "none";
+  } else if (view === "orders") {
+    pageHeaderTitle.textContent = "成单管理";
+    viewLeads.style.display = "none";
+    viewDashboard.style.display = "none";
+    viewFiles.style.display = "none";
+    if (viewTemplateFiles) {
+      viewTemplateFiles.style.display = "none";
+    }
+    viewCommunications.style.display = "none";
+  } else if (view === "files") {
+    pageHeaderTitle.textContent = "生成文件";
+    viewLeads.style.display = "none";
+    viewDashboard.style.display = "none";
+    viewFiles.style.display = "block";
+    if (viewTemplateFiles) {
+      viewTemplateFiles.style.display = "none";
+    }
+    if (viewTemplateDetail) {
+      viewTemplateDetail.classList.remove("enter-active");
+      viewTemplateDetail.classList.remove("visible");
+    }
+    viewCommunications.style.display = "none";
+    renderFilesTable();
+  } else if (view === "fileTemplates") {
+    pageHeaderTitle.textContent = "生成文件";
+    var mainFilesItem = sideMenu.querySelector('.menu-item[data-view="files"]');
+    if (mainFilesItem && !mainFilesItem.classList.contains("active")) {
+      mainFilesItem.classList.add("active");
+    }
+    viewLeads.style.display = "none";
+    viewDashboard.style.display = "none";
+    viewFiles.style.display = "none";
+    if (viewTemplateFiles) {
+      viewTemplateFiles.style.display = "block";
+    }
+    if (viewTemplateDetail) {
+      viewTemplateDetail.classList.remove("enter-active");
+      viewTemplateDetail.classList.remove("visible");
+    }
+    viewCommunications.style.display = "none";
+    renderTemplateTable();
+  } else if (view === "communications") {
+    pageHeaderTitle.textContent = "客户沟通记录";
+    viewLeads.style.display = "none";
+    viewDashboard.style.display = "none";
+    viewFiles.style.display = "none";
+    viewCommunications.style.display = "block";
+    if (communicationLoading && !communicationLoaded) {
+      communicationLoading.style.display = "flex";
+      setTimeout(function () {
+        communicationLoading.style.display = "none";
+        communicationLoaded = true;
+      }, 600);
+    }
+  }
+});
+function createDashboardChartData() {
+  var labels = [];
+  var now = new Date();
+  for (var i = 14; i >= 0; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    var month = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    labels.push(month + "-" + day);
+  }
+  var sales = [];
+  var customers = [];
+  var orders = [];
+  for (var j = 0; j < labels.length; j++) {
+    var baseSales = 70000 + j * 3000;
+    sales.push(baseSales + Math.round(Math.random() * 15000));
+    customers.push(60 + Math.round(Math.random() * 20));
+    orders.push(30 + Math.round(Math.random() * 15));
+  }
+  return {
+    labels: labels,
+    sales: sales,
+    customers: customers,
+    orders: orders
+  };
+}
+function getDashboardMetricConfig(metric) {
+  if (metric === "sales") {
+    return {
+      label: "销售额",
+      unit: "¥",
+      color: "#1677ff",
+      data: dashboardChartData.sales
+    };
+  }
+  if (metric === "customers") {
+    return {
+      label: "客户数",
+      unit: "",
+      color: "#52c41a",
+      data: dashboardChartData.customers
+    };
+  }
+  return {
+    label: "订单数",
+    unit: "",
+    color: "#faad14",
+    data: dashboardChartData.orders
+  };
+}
+function renderFunnelChart() {
+  if (!funnelChartCanvas) {
+    return;
+  }
+  var ctx = funnelChartCanvas.getContext("2d");
+  var width = funnelChartCanvas.clientWidth;
+  var height = funnelChartCanvas.clientHeight;
+  if (!width || !height) {
+    return;
+  }
+  funnelChartCanvas.width = width;
+  funnelChartCanvas.height = height;
+  ctx.clearRect(0, 0, width, height);
+  var topWidth = width * 0.8;
+  var bottomWidth = width * 0.3;
+  var centerX = width / 2;
+  var topY = 10;
+  var bottomY = height - 40;
+  var stepHeight = (bottomY - topY) / funnelChartData.length;
+  var colors = ["#1677ff", "#40a9ff", "#69c0ff", "#91d5ff"];
+  funnelChartMeta = [];
+  var i;
+  for (i = 0; i < funnelChartData.length; i++) {
+    var y0 = topY + stepHeight * i;
+    var y1 = y0 + stepHeight;
+    var t0 = i / funnelChartData.length;
+    var t1 = (i + 1) / funnelChartData.length;
+    var w0 = topWidth - (topWidth - bottomWidth) * t0;
+    var w1 = topWidth - (topWidth - bottomWidth) * t1;
+    var leftTopX = centerX - w0 / 2;
+    var rightTopX = centerX + w0 / 2;
+    var leftBottomX = centerX - w1 / 2;
+    var rightBottomX = centerX + w1 / 2;
+    ctx.beginPath();
+    ctx.moveTo(leftTopX, y0);
+    ctx.lineTo(rightTopX, y0);
+    ctx.lineTo(rightBottomX, y1);
+    ctx.lineTo(leftBottomX, y1);
+    ctx.closePath();
+    ctx.save();
+    if (funnelActiveIndex !== -1 && i !== funnelActiveIndex) {
+      ctx.globalAlpha = 0.4;
+    }
+    ctx.fillStyle = colors[i] || colors[colors.length - 1];
+    ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    var current = funnelChartData[i];
+    var prev = i === 0 ? current : funnelChartData[i - 1];
+    var rate =
+      i === 0
+        ? "100%"
+        : ((current.value / prev.value) * 100).toFixed(1).replace(/\.0$/, "") + "%";
+    var cx = centerX;
+    var cy = (y0 + y1) / 2;
+    ctx.fillStyle = "#666";
+    ctx.font = "14px \"Source Han Sans SC\", Roboto, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(current.label, leftTopX + 10, cy - 4);
+    var percentText = rate;
+    var percentWidth = ctx.measureText(percentText).width;
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#333";
+    ctx.fillText(percentText, rightTopX - 10, cy - 4);
+    funnelChartMeta.push({
+      rectX: Math.min(leftTopX, leftBottomX),
+      rectY: y0,
+      rectWidth: Math.max(rightTopX, rightBottomX) - Math.min(leftTopX, leftBottomX),
+      rectHeight: y1 - y0,
+      centerX: cx,
+      centerY: cy,
+      label: current.label,
+      value: current.value,
+      rate: rate
+    });
+    if (i < funnelChartData.length - 1) {
+      ctx.strokeStyle = "#d9d9d9";
+      ctx.lineWidth = 1;
+      var arrowY = y1 + 4;
+      ctx.beginPath();
+      ctx.moveTo(centerX, arrowY);
+      ctx.lineTo(centerX, arrowY + 10);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(centerX - 4, arrowY + 8);
+      ctx.lineTo(centerX, arrowY + 12);
+      ctx.lineTo(centerX + 4, arrowY + 8);
+      ctx.closePath();
+      ctx.fillStyle = "#d9d9d9";
+      ctx.fill();
+    }
+  }
+}
+function renderProductPieChart() {
+  if (!productPieChartCanvas) {
+    return;
+  }
+  var ctx = productPieChartCanvas.getContext("2d");
+  var width = productPieChartCanvas.clientWidth;
+  var height = productPieChartCanvas.clientHeight;
+  if (!width || !height) {
+    return;
+  }
+  productPieChartCanvas.width = width;
+  productPieChartCanvas.height = height;
+  ctx.clearRect(0, 0, width, height);
+  var centerX = width * 0.35;
+  var centerY = height / 2;
+  var radius = Math.min(width, height) * 0.35;
+  var innerRadius = radius * 0.4;
+  var colors = ["#52c41a", "#faad14", "#ff4d4f", "#722ed1"];
+  var total = 0;
+  var i;
+  for (i = 0; i < productPieChartData.length; i++) {
+    total += productPieChartData[i].value;
+  }
+  productPieChartMeta = [];
+  var startAngle = -Math.PI / 2;
+  for (i = 0; i < productPieChartData.length; i++) {
+    var item = productPieChartData[i];
+    var angle = (item.value / total) * Math.PI * 2;
+    var endAngle = startAngle + angle;
+    var sliceRadius = radius;
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, sliceRadius, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fillStyle = colors[i] || colors[colors.length - 1];
+    ctx.fill();
+    var midAngle = (startAngle + endAngle) / 2;
+    var labelRadius = sliceRadius * 0.75;
+    var labelX = centerX + Math.cos(midAngle) * labelRadius;
+    var labelY = centerY + Math.sin(midAngle) * labelRadius;
+    var percent = ((item.value / total) * 100).toFixed(1).replace(/\.0$/, "") + "%";
+    var labelText = item.label + " " + percent;
+    ctx.fillStyle = "#333";
+    ctx.font = "12px \"Source Han Sans SC\", Roboto, sans-serif";
+    ctx.textAlign = midAngle > Math.PI / 2 && midAngle < (Math.PI * 3) / 2 ? "right" : "left";
+    ctx.fillText(labelText, labelX, labelY);
+    productPieChartMeta.push({
+      startAngle: startAngle,
+      endAngle: endAngle,
+      outerRadius: radius,
+      innerRadius: innerRadius,
+      centerX: centerX,
+      centerY: centerY,
+      label: item.label,
+      value: item.value,
+      percent: percent
+    });
+    startAngle = endAngle;
+  }
+  ctx.beginPath();
+  ctx.fillStyle = "#f5f7fa";
+  ctx.arc(centerX, centerY, innerRadius, 0, Math.PI * 2);
+  ctx.fill();
+  var legendX = width * 0.7;
+  var legendY = centerY - (productPieChartData.length * 22) / 2;
+  ctx.textAlign = "left";
+  ctx.font = "12px \"Source Han Sans SC\", Roboto, sans-serif";
+  for (i = 0; i < productPieChartData.length; i++) {
+    var ly = legendY + i * 22;
+    ctx.fillStyle = colors[i] || colors[colors.length - 1];
+    ctx.fillRect(legendX, ly, 12, 12);
+    ctx.fillStyle = "#666";
+    ctx.fillText(productPieChartData[i].label, legendX + 18, ly + 11);
+  }
+}
+function renderChannelBarChart() {
+  if (!channelBarChartCanvas) {
+    return;
+  }
+  var ctx = channelBarChartCanvas.getContext("2d");
+  var width = channelBarChartCanvas.clientWidth;
+  var height = channelBarChartCanvas.clientHeight;
+  if (!width || !height) {
+    return;
+  }
+  channelBarChartCanvas.width = width;
+  channelBarChartCanvas.height = height;
+  ctx.clearRect(0, 0, width, height);
+  var paddingLeft = 80;
+  var paddingRight = 30;
+  var paddingTop = 20;
+  var paddingBottom = 40;
+  var chartWidth = width - paddingLeft - paddingRight;
+  var chartHeight = height - paddingTop - paddingBottom;
+  var maxPercent = 0.5;
+  var i;
+  ctx.strokeStyle = "#e5e5e5";
+  ctx.lineWidth = 1;
+  var ticks = 5;
+  for (i = 0; i <= ticks; i++) {
+    var x = paddingLeft + (chartWidth / ticks) * i;
+    ctx.beginPath();
+    ctx.moveTo(x, paddingTop);
+    ctx.lineTo(x, height - paddingBottom);
+    ctx.stroke();
+    var percentLabel = (i * 10).toString() + "%";
+    ctx.fillStyle = "#999";
+    ctx.font = "12px Roboto, Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(percentLabel, x, height - paddingBottom + 20);
+  }
+  var barCount = channelBarChartData.length;
+  var barHeight = chartHeight / (barCount * 1.6);
+  var barGap = barHeight * 0.6;
+  var baseY = paddingTop;
+  channelBarChartMeta = [];
+  for (i = 0; i < channelBarChartData.length; i++) {
+    var item = channelBarChartData[i];
+    var y = baseY + i * (barHeight + barGap);
+    var barWidth = (item.value / maxPercent) * chartWidth;
+    ctx.fillStyle = "#666";
+    ctx.font = "12px \"Source Han Sans SC\", Roboto, sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText(item.label, paddingLeft - 8, y + barHeight * 0.7);
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, y);
+    ctx.lineTo(paddingLeft + chartWidth, y);
+    ctx.strokeStyle = "#f0f0f0";
+    ctx.stroke();
+    ctx.fillStyle = i === channelBarActiveIndex ? "#0958d9" : "#1677ff";
+    ctx.fillRect(paddingLeft, y, barWidth, barHeight);
+    ctx.fillStyle = "#333";
+    ctx.font = "12px Roboto, Arial, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(item.display, paddingLeft + barWidth + 6, y + barHeight * 0.7);
+    channelBarChartMeta.push({
+      x: paddingLeft,
+      y: y,
+      width: barWidth,
+      height: barHeight,
+      label: item.label,
+      value: item.value,
+      display: item.display
+    });
+  }
+}
+function renderDashboardChart() {
+  if (!dashboardChartCanvas) {
+    return;
+  }
+  var ctx = dashboardChartCanvas.getContext("2d");
+  var width = dashboardChartCanvas.clientWidth;
+  var height = dashboardChartCanvas.clientHeight;
+  dashboardChartCanvas.width = width;
+  dashboardChartCanvas.height = height;
+  ctx.clearRect(0, 0, width, height);
+  var paddingLeft = 50;
+  var paddingRight = 20;
+  var paddingTop = 20;
+  var paddingBottom = 40;
+  var config = getDashboardMetricConfig(dashboardActiveMetric);
+  var labels = dashboardChartData.labels;
+  var values = config.data;
+  var minValue = Math.min.apply(null, values);
+  var maxValue = Math.max.apply(null, values);
+  var range = maxValue - minValue || 1;
+  var yMin = minValue - range * 0.1;
+  var yMax = maxValue + range * 0.1;
+  var yRange = yMax - yMin;
+  var chartWidth = width - paddingLeft - paddingRight;
+  var chartHeight = height - paddingTop - paddingBottom;
+  ctx.strokeStyle = "#e5e5e5";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  var gridLines = 4;
+  for (var i = 0; i <= gridLines; i++) {
+    var y = paddingTop + (chartHeight / gridLines) * i;
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, y);
+    ctx.lineTo(width - paddingRight, y);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.fillStyle = "#999";
+  ctx.font = "12px Roboto, Arial, sans-serif";
+  for (var k = 0; k <= gridLines; k++) {
+    var value = yMax - (yRange / gridLines) * k;
+    var yLabel = paddingTop + (chartHeight / gridLines) * k;
+    var text = Math.round(value).toString();
+    var textWidth = ctx.measureText(text).width;
+    ctx.fillText(text, paddingLeft - 8 - textWidth, yLabel + 4);
+  }
+  ctx.fillStyle = "#999";
+  var stepX = chartWidth / (labels.length - 1);
+  for (var m = 0; m < labels.length; m++) {
+    var x = paddingLeft + stepX * m;
+    if (labels.length <= 7 || m % 2 === 0) {
+      ctx.fillText(labels[m], x - 16, height - paddingBottom + 20);
+    }
+  }
+  dashboardChartPointMeta = [];
+  var points = [];
+  for (var n = 0; n < labels.length; n++) {
+    var valueN = values[n];
+    var ratio = (valueN - yMin) / yRange;
+    var xPoint = paddingLeft + stepX * n;
+    var yPoint = paddingTop + chartHeight * (1 - ratio);
+    points.push({ x: xPoint, y: yPoint, value: valueN, label: labels[n] });
+  }
+  ctx.strokeStyle = config.color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (var p = 0; p < points.length; p++) {
+    var pt = points[p];
+    if (p === 0) {
+      ctx.moveTo(pt.x, pt.y);
+    } else {
+      var prev = points[p - 1];
+      var cx = (prev.x + pt.x) / 2;
+      var cy = (prev.y + pt.y) / 2;
+      ctx.quadraticCurveTo(prev.x, prev.y, cx, cy);
+    }
+  }
+  ctx.stroke();
+  ctx.fillStyle = "#fff";
+  ctx.strokeStyle = config.color;
+  for (var q = 0; q < points.length; q++) {
+    var pt2 = points[q];
+    ctx.beginPath();
+    ctx.arc(pt2.x, pt2.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+  ctx.fillStyle = "#666";
+  ctx.font = "11px Roboto, Arial, sans-serif";
+  for (var r = 0; r < points.length; r++) {
+    var pt3 = points[r];
+    var labelValue = config.unit ? config.unit + pt3.value : pt3.value;
+    ctx.fillText(labelValue, pt3.x - 18, pt3.y - 10);
+  }
+  dashboardChartPointMeta = points.map(function (pt4) {
+    return {
+      x: pt4.x,
+      y: pt4.y,
+      value: pt4.value,
+      label: pt4.label,
+      metricLabel: config.label,
+      unit: config.unit
+    };
+  });
+}
+function dashboardUpdateActiveTab() {
+  var tabs = dashboardChartTabs.querySelectorAll(".dashboard-chart-tab");
+  for (var i = 0; i < tabs.length; i++) {
+    var tab = tabs[i];
+    var metric = tab.getAttribute("data-metric");
+    if (metric === dashboardActiveMetric) {
+      tab.classList.add("active");
+    } else {
+      tab.classList.remove("active");
+    }
+  }
+}
+dashboardChartTabs.addEventListener("click", function (event) {
+  var target = event.target;
+  if (!target.classList.contains("dashboard-chart-tab")) {
+    return;
+  }
+  var metric = target.getAttribute("data-metric");
+  if (!metric || metric === dashboardActiveMetric) {
+    return;
+  }
+  dashboardActiveMetric = metric;
+  dashboardUpdateActiveTab();
+  dashboardHideTooltip();
+  renderDashboardChart();
+});
+funnelChartCanvas.addEventListener("mousemove", function (event) {
+  if (!funnelChartMeta.length) {
+    return;
+  }
+  var rect = funnelChartCanvas.getBoundingClientRect();
+  var mouseX = event.clientX - rect.left;
+  var mouseY = event.clientY - rect.top;
+  var scaleX = funnelChartCanvas.clientWidth / funnelChartCanvas.width;
+  var scaleY = funnelChartCanvas.clientHeight / funnelChartCanvas.height;
+  var i;
+  var activeIndex = -1;
+  for (i = 0; i < funnelChartMeta.length; i++) {
+    var meta = funnelChartMeta[i];
+    var x = meta.rectX * scaleX;
+    var y = meta.rectY * scaleY;
+    var w = meta.rectWidth * scaleX;
+    var h = meta.rectHeight * scaleY;
+    if (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h) {
+      activeIndex = i;
+      break;
+    }
+  }
+  if (activeIndex === -1) {
+    funnelChartTooltip.classList.remove("visible");
+    return;
+  }
+  var activeMeta = funnelChartMeta[activeIndex];
+  var tooltipX = activeMeta.centerX * scaleX;
+  var tooltipY = activeMeta.centerY * scaleY;
+  funnelChartTooltip.innerHTML =
+    "<div>阶段：" +
+    activeMeta.label +
+    "</div><div>人数：" +
+    activeMeta.value +
+    "</div><div>转化率：" +
+    activeMeta.rate +
+    "</div>";
+  funnelChartTooltip.style.left = tooltipX + "px";
+  funnelChartTooltip.style.top = tooltipY + "px";
+  funnelChartTooltip.classList.add("visible");
+});
+funnelChartCanvas.addEventListener("mouseleave", function () {
+  funnelChartTooltip.classList.remove("visible");
+});
+productPieChartCanvas.addEventListener("mousemove", function (event) {
+  if (!productPieChartMeta.length) {
+    return;
+  }
+  var rect = productPieChartCanvas.getBoundingClientRect();
+  var mouseX = event.clientX - rect.left;
+  var mouseY = event.clientY - rect.top;
+  var scaleX = productPieChartCanvas.clientWidth / productPieChartCanvas.width;
+  var scaleY = productPieChartCanvas.clientHeight / productPieChartCanvas.height;
+  var scaledX = mouseX / scaleX;
+  var scaledY = mouseY / scaleY;
+  var i;
+  var activeIndex = -1;
+  for (i = 0; i < productPieChartMeta.length; i++) {
+    var meta = productPieChartMeta[i];
+    var dx = scaledX - meta.centerX;
+    var dy = scaledY - meta.centerY;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < meta.innerRadius || dist > meta.outerRadius) {
+      continue;
+    }
+    var angle = Math.atan2(dy, dx);
+    if (angle < -Math.PI / 2) {
+      angle += Math.PI * 2;
+    }
+    if (angle >= meta.startAngle && angle <= meta.endAngle) {
+      activeIndex = i;
+      break;
+    }
+  }
+  if (activeIndex === -1) {
+    productPieChartTooltip.classList.remove("visible");
+    return;
+  }
+  var activeMeta = productPieChartMeta[activeIndex];
+  var tooltipX = activeMeta.centerX * scaleX;
+  var tooltipY = activeMeta.centerY * scaleY;
+  productPieChartTooltip.innerHTML =
+    "<div>商品：" +
+    activeMeta.label +
+    "</div><div>售卖量：" +
+    activeMeta.value +
+    "</div><div>占比：" +
+    activeMeta.percent +
+    "</div>";
+  productPieChartTooltip.style.left = tooltipX + "px";
+  productPieChartTooltip.style.top = tooltipY + "px";
+  productPieChartTooltip.classList.add("visible");
+});
+productPieChartCanvas.addEventListener("mouseleave", function () {
+  productPieChartTooltip.classList.remove("visible");
+});
+channelBarChartCanvas.addEventListener("mousemove", function (event) {
+  if (!channelBarChartMeta.length) {
+    return;
+  }
+  var rect = channelBarChartCanvas.getBoundingClientRect();
+  var mouseX = event.clientX - rect.left;
+  var mouseY = event.clientY - rect.top;
+  var scaleX = channelBarChartCanvas.clientWidth / channelBarChartCanvas.width;
+  var scaleY = channelBarChartCanvas.clientHeight / channelBarChartCanvas.height;
+  var i;
+  var activeIndex = -1;
+  for (i = 0; i < channelBarChartMeta.length; i++) {
+    var meta = channelBarChartMeta[i];
+    var x = meta.x * scaleX;
+    var y = meta.y * scaleY;
+    var w = meta.width * scaleX;
+    var h = meta.height * scaleY;
+    if (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h) {
+      activeIndex = i;
+      break;
+    }
+  }
+  if (activeIndex === -1) {
+    channelBarChartTooltip.classList.remove("visible");
+    return;
+  }
+  var activeMeta = channelBarChartMeta[activeIndex];
+  var tooltipX = (activeMeta.x + activeMeta.width) * scaleX;
+  var tooltipY = (activeMeta.y + activeMeta.height / 2) * scaleY;
+  var valuePercent = (activeMeta.value * 100).toFixed(1).replace(/\.0$/, "") + "%";
+  channelBarChartTooltip.innerHTML =
+    "<div>渠道：" +
+    activeMeta.label +
+    "</div><div>占比：" +
+    activeMeta.display +
+    "</div><div>具体数值：" +
+    valuePercent +
+    "</div>";
+  channelBarChartTooltip.style.left = tooltipX + "px";
+  channelBarChartTooltip.style.top = tooltipY + "px";
+  channelBarChartTooltip.classList.add("visible");
+});
+channelBarChartCanvas.addEventListener("mouseleave", function () {
+  channelBarChartTooltip.classList.remove("visible");
+});
+function dashboardShowTooltip(x, y, meta) {
+  dashboardTooltipDate.textContent = "日期：" + meta.label;
+  var valueText = meta.unit ? meta.unit + meta.value : meta.value;
+  dashboardTooltipValue.textContent = meta.metricLabel + "：" + valueText;
+  dashboardChartTooltip.style.left = x + "px";
+  dashboardChartTooltip.style.top = y + "px";
+  dashboardChartTooltip.classList.add("visible");
+}
+function dashboardHideTooltip() {
+  dashboardChartTooltip.classList.remove("visible");
+}
+dashboardChartCanvas.addEventListener("mousemove", function (event) {
+  if (!dashboardChartPointMeta.length) {
+    return;
+  }
+  var rect = dashboardChartCanvas.getBoundingClientRect();
+  var mouseX = event.clientX - rect.left;
+  var mouseY = event.clientY - rect.top;
+  var nearest = null;
+  var minDist = Infinity;
+  for (var i = 0; i < dashboardChartPointMeta.length; i++) {
+    var pt = dashboardChartPointMeta[i];
+    var dx = pt.x * (dashboardChartCanvas.clientWidth / dashboardChartCanvas.width) - mouseX;
+    var dy = pt.y * (dashboardChartCanvas.clientHeight / dashboardChartCanvas.height) - mouseY;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < minDist) {
+      minDist = dist;
+      nearest = pt;
+    }
+  }
+  if (nearest && minDist < 20) {
+    var tooltipX = nearest.x * (dashboardChartCanvas.clientWidth / dashboardChartCanvas.width);
+    var tooltipY = nearest.y * (dashboardChartCanvas.clientHeight / dashboardChartCanvas.height);
+    dashboardShowTooltip(tooltipX, tooltipY, nearest);
+  } else {
+    dashboardHideTooltip();
+  }
+});
+dashboardChartCanvas.addEventListener("mouseleave", function () {
+  dashboardHideTooltip();
+});
+window.addEventListener("resize", function () {
+  if (viewDashboard.style.display !== "none") {
+    renderDashboardChart();
+    renderFunnelChart();
+    renderProductPieChart();
+    renderChannelBarChart();
+  }
+});
+</script>
+</body>
+</html>
+
