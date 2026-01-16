@@ -170,17 +170,17 @@ const aiAgents: AiAgentOption[] = [
   {
     key: "crm-v1",
     name: "CRM V1（查询&数据操作）",
-    url: "http://localhost/chat/6s6rFKYGotx4wBHh"
+    url: "http://8.148.202.246:3001/chat/LvMFum5PhpVUwTa8"
   },
   {
     key: "crm-v2",
     name: "CRM V2（数据解读&数据分析）",
-    url: "http://localhost/chat/8rryBWLbiWYoTxNn"
+    url: "http://8.148.202.246:3001/chat/XYmUmSDH6m7QDdtJ"
   },
   {
     key: "crm-v3",
     name: "CRM V3（文档处理&生成）",
-    url: "http://localhost/chat/VPM4FrXd1OpIfp0q"
+    url: "http://8.148.202.246:3001/chat/OkP7M15kqv21zHAP"
   }
 ];
 
