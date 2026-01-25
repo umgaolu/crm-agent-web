@@ -1,11 +1,28 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function readEnv(value: unknown) {
+  const raw = value !== null && value !== undefined ? String(value).trim() : "";
+  if (!raw) {
+    return "";
+  }
+  return raw.replace(/^['"`]/, "").replace(/['"`]$/, "").trim();
+}
+
+const supabaseUrl = readEnv(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const supabaseKey = readEnv(
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY
+);
 
 const supabase = createClient(supabaseUrl, supabaseKey || "");
+
+function toOptionalString(value: unknown) {
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+  const raw = String(value).trim();
+  return raw ? raw : undefined;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -43,7 +60,7 @@ export default async function handler(
         : unitPrice && quantity
         ? unitPrice * quantity
         : null;
-    const payload = {
+    const payload: Record<string, any> = {
       客户姓名: body.customerName,
       联系电话: body.phone ? Number(body.phone) : null,
       商品名称: body.productName,
@@ -56,6 +73,23 @@ export default async function handler(
       支付日期: body.payDate || null,
       发货日期: body.deliverDate || null
     };
+
+    if (Object.prototype.hasOwnProperty.call(body, "salesmanId")) {
+      const salesmanIdFromBody = toOptionalString(body.salesmanId);
+      const salesmanNameFromBody = toOptionalString(body.salesmanName);
+      const inferredSalesmanId =
+        salesmanIdFromBody ||
+        (salesmanNameFromBody && /^s\d+$/i.test(salesmanNameFromBody)
+          ? salesmanNameFromBody
+          : undefined);
+      payload["销售员ID"] = inferredSalesmanId || null;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(body, "leadId") || Object.prototype.hasOwnProperty.call(body, "clueId")) {
+      const leadId = toOptionalString(body.leadId ?? body.clueId);
+      payload["线索ID"] = leadId || null;
+    }
+
     const { data, error } = await supabase
       .from("sales_orders")
       .update(payload)
@@ -77,6 +111,8 @@ export default async function handler(
         totalAmount: data["总金额"],
         status: data["订单状态"],
         salesmanName: data["销售员姓名"],
+        salesmanId: toOptionalString(data["销售员ID"]),
+        leadId: toOptionalString(data["线索ID"]),
         orderDate: data["订单日期"],
         payDate: data["支付日期"],
         deliverDate: data["发货日期"]

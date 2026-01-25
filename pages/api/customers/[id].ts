@@ -1,8 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function readEnv(value: unknown) {
+  const raw = value !== null && value !== undefined ? String(value).trim() : "";
+  if (!raw) {
+    return "";
+  }
+  return raw.replace(/^['"`]/, "").replace(/['"`]$/, "").trim();
+}
+
+const supabaseUrl = readEnv(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const supabaseKey = readEnv(
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY
+);
 
 const supabase = createClient(supabaseUrl, supabaseKey || "");
 
@@ -38,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       owner: body.owner
     };
     const { data, error } = await supabase
-      .from("customers")
+      .from("customer_leads")
       .update(payload)
       .eq("id", id)
       .select("*")
@@ -63,7 +73,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === "DELETE") {
-    const { error } = await supabase.from("customers").delete().eq("id", id);
+    const { error } = await supabase
+      .from("customer_leads")
+      .delete()
+      .eq("id", id);
     if (error) {
       res.status(500).json({ error: error.message });
       return;

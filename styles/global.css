@@ -148,3 +148,60 @@ body {
     transform: rotate(360deg);
   }
 }
+
+.ai-score-popover {
+  background-color: #001529;
+  color: #fff;
+}
+
+.ai-score-popover.ant-popover {
+  border-radius: 8px;
+}
+
+.ai-score-popover .ant-popover-inner {
+  background-color: #001529;
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 8px;
+}
+
+.ai-score-popover .ant-popover-arrow-content {
+  background-color: #001529 !important;
+  border-radius: 4px;
+}
+
+.ai-score-popover-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+.ai-score-popover-section-label {
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.ai-score-popover-section-label.positive {
+  color: #95de64;
+}
+
+.ai-score-popover-section-label.negative {
+  color: #ff7875;
+}
+
+.ai-score-popover-section-label.suggestion {
+  color: #69c0ff;
+}
+
+.ai-score-popover-section-content {
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 6px;
+  white-space: pre-wrap;
+  color: #ffffff;
+}
+
+.ai-score-popover-section-content:last-child {
+  margin-bottom: 0;
+}

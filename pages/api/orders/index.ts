@@ -1,11 +1,28 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function readEnv(value: unknown) {
+  const raw = value !== null && value !== undefined ? String(value).trim() : "";
+  if (!raw) {
+    return "";
+  }
+  return raw.replace(/^['"`]/, "").replace(/['"`]$/, "").trim();
+}
+
+const supabaseUrl = readEnv(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const supabaseKey = readEnv(
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY
+);
 
 const supabase = createClient(supabaseUrl, supabaseKey || "");
+
+function toOptionalString(value: unknown) {
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+  const raw = String(value).trim();
+  return raw ? raw : undefined;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -61,6 +78,8 @@ export default async function handler(
         totalAmount: row["总金额"],
         status: row["订单状态"],
         salesmanName: row["销售员姓名"],
+        salesmanId: toOptionalString(row["销售员ID"]),
+        leadId: toOptionalString(row["线索ID"]),
         orderDate: row["订单日期"],
         payDate: row["支付日期"],
         deliverDate: row["发货日期"]
@@ -82,6 +101,14 @@ export default async function handler(
         : unitPrice && quantity
         ? unitPrice * quantity
         : null;
+    const salesmanIdFromBody = toOptionalString(body.salesmanId);
+    const salesmanNameFromBody = toOptionalString(body.salesmanName);
+    const inferredSalesmanId =
+      salesmanIdFromBody ||
+      (salesmanNameFromBody && /^s\d+$/i.test(salesmanNameFromBody)
+        ? salesmanNameFromBody
+        : undefined);
+    const leadId = toOptionalString(body.leadId ?? body.clueId);
     const payload = {
       订单ID: generatedId,
       客户姓名: body.customerName,
@@ -92,6 +119,8 @@ export default async function handler(
       总金额: totalAmount,
       订单状态: body.status,
       销售员姓名: body.salesmanName,
+      销售员ID: inferredSalesmanId || null,
+      线索ID: leadId || null,
       订单日期: body.orderDate || null,
       支付日期: body.payDate || null,
       发货日期: body.deliverDate || null
@@ -116,6 +145,8 @@ export default async function handler(
         totalAmount: data["总金额"],
         status: data["订单状态"],
         salesmanName: data["销售员姓名"],
+        salesmanId: toOptionalString(data["销售员ID"]),
+        leadId: toOptionalString(data["线索ID"]),
         orderDate: data["订单日期"],
         payDate: data["支付日期"],
         deliverDate: data["发货日期"]

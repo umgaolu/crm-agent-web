@@ -1,8 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function readEnv(value: unknown) {
+  const raw = value !== null && value !== undefined ? String(value).trim() : "";
+  if (!raw) {
+    return "";
+  }
+  return raw.replace(/^['"`]/, "").replace(/['"`]$/, "").trim();
+}
+
+const supabaseUrl = readEnv(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const supabaseKey = readEnv(
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY
+);
 
 const supabase = createClient(supabaseUrl, supabaseKey || "");
 
@@ -46,25 +56,74 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: error.message });
       return;
     }
+
+    const rows = data || [];
+    const leadIds = rows
+      .map((row: any) => row["线索ID"])
+      .filter((id: any) => id !== null && id !== undefined)
+      .map((id: any) => String(id));
+
+    let leadMarksByLeadId: Record<string, any> = {};
+
+    if (leadIds.length > 0) {
+      const { data: marks } = await supabase
+        .from("lead_marks")
+        .select("*")
+        .in("线索ID", leadIds);
+
+      if (marks && Array.isArray(marks)) {
+        leadMarksByLeadId = {};
+        for (const row of marks) {
+          const leadId = (row as any)["线索ID"];
+          if (leadId === null || leadId === undefined) {
+            continue;
+          }
+          const key = String(leadId);
+          if (!leadMarksByLeadId[key]) {
+            leadMarksByLeadId[key] = row;
+          }
+        }
+      }
+    }
+
     res.status(200).json({
-      items: (data || []).map((row) => ({
-        id: row["线索ID"],
-        name: row["客户姓名"],
-        phone: row["联系电话"] ? String(row["联系电话"]) : undefined,
-        email: row["邮箱"],
-        status: row["跟进状态"],
-        source: row["来源渠道"],
-        owner: row["负责销售员"],
-        createdAt: row["创建日期"],
-        nextFollowUp: row["最后跟进日期"],
-        intentionProduct: row["意向产品"],
-        budgetRange: row["预算范围"],
-        remark: row["备注"],
-        position: row["客户岗位"],
-        trainingNeed: row["参加培训的需求弱弱"],
-        trialDuration: row["试听课收听时长"],
-        communicationTimes: row["与客户沟通次数"]
-      }))
+      items: rows.map((row: any) => {
+        const leadId = String(row["线索ID"]);
+        const markRow = leadMarksByLeadId[leadId];
+        const scoreValue =
+          markRow && typeof markRow["线索分数"] === "number"
+            ? markRow["线索分数"]
+            : markRow && typeof markRow.score === "number"
+            ? markRow.score
+            : null;
+        const hasMark = Boolean(markRow);
+
+        return {
+          id: leadId,
+          name: row["客户姓名"],
+          phone: row["联系电话"] ? String(row["联系电话"]) : undefined,
+          email: row["邮箱"],
+          status: row["跟进状态"],
+          source: row["来源渠道"],
+          owner: row["负责销售员"],
+          createdAt: row["创建日期"],
+          nextFollowUp: row["最后跟进日期"],
+          intentionProduct: row["意向产品"],
+          budgetRange: row["预算范围"],
+          remark: row["备注"],
+          position: row["客户岗位"],
+          trainingNeed: row["参加培训的需求强弱"],
+          trialDuration: row["试听课收听时长"],
+          communicationTimes: row["与客户沟通次数"],
+          aiScore: typeof scoreValue === "number" ? scoreValue : null,
+          aiPros: markRow ? markRow["有利因素"] ?? markRow.pros ?? "" : "",
+          aiCons: markRow ? markRow["不利因素"] ?? markRow.cons ?? "" : "",
+          aiSuggestions: markRow
+            ? markRow["后续建议"] ?? markRow.suggestions ?? ""
+            : "",
+          hasAiMark: hasMark
+        };
+      })
     });
     return;
   }
@@ -121,7 +180,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         budgetRange: data["预算范围"],
         remark: data["备注"],
         position: data["客户岗位"],
-        trainingNeed: data["参加培训的需求弱弱"],
+        trainingNeed: data["参加培训的需求强弱"],
         trialDuration: data["试听课收听时长"],
         communicationTimes: data["与客户沟通次数"]
       }

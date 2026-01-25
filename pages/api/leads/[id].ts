@@ -1,8 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function readEnv(value: unknown) {
+  const raw = value !== null && value !== undefined ? String(value).trim() : "";
+  if (!raw) {
+    return "";
+  }
+  return raw.replace(/^['"`]/, "").replace(/['"`]$/, "").trim();
+}
+
+const supabaseUrl = readEnv(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const supabaseKey = readEnv(
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY
+);
 
 const supabase = createClient(supabaseUrl, supabaseKey || "");
 
@@ -78,7 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         budgetRange: data["预算范围"],
         remark: data["备注"],
         position: data["客户岗位"],
-        trainingNeed: data["参加培训的需求弱弱"],
+        trainingNeed: data["参加培训的需求强弱"],
         trialDuration: data["试听课收听时长"],
         communicationTimes: data["与客户沟通次数"]
       }
@@ -87,7 +97,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === "DELETE") {
-    const { error } = await supabase.from("customer_leads").delete().eq("线索ID", id);
+    const { deleteMarks } = req.query;
+    const shouldDeleteMarks =
+      deleteMarks === "true" || deleteMarks === "1" || deleteMarks === "yes";
+
+    if (shouldDeleteMarks) {
+      const { error: marksError } = await supabase
+        .from("lead_marks")
+        .delete()
+        .eq("线索ID", id);
+      if (marksError) {
+        res.status(500).json({ error: marksError.message });
+        return;
+      }
+    }
+
+    const { error } = await supabase
+      .from("customer_leads")
+      .delete()
+      .eq("线索ID", id);
     if (error) {
       res.status(500).json({ error: error.message });
       return;

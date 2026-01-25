@@ -1,9 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function readEnv(value: unknown) {
+  const raw = value !== null && value !== undefined ? String(value).trim() : "";
+  if (!raw) {
+    return "";
+  }
+  return raw.replace(/^['"`]/, "").replace(/['"`]$/, "").trim();
+}
+
+const supabaseUrl = readEnv(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const supabaseKey = readEnv(
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY
+);
 
 const supabase = createClient(supabaseUrl, supabaseKey || "");
 
@@ -28,7 +37,7 @@ async function resolveLeadIds(leadId: string): Promise<string[]> {
   return ids;
 }
 
-function buildLocalSummary(conversation: string): string {
+function buildLocalSummary(): string {
   return [
     "客户的购买意向：根据当前沟通记录，客户对产品/课程表现出一定兴趣，建议继续保持高质量跟进，确认决策时间与预算安排。",
     "客户感兴趣的产品：可以重点关注沟通中多次出现的需求关键词，结合已有课程或产品方案进行匹配推荐。",
@@ -139,7 +148,7 @@ async function generateAnalysisFromAgent(leadId: string): Promise<string> {
   ].join("\n");
 
   if (!agentApiUrl) {
-    return buildLocalSummary(conversation);
+    return buildLocalSummary();
   }
 
   try {
@@ -171,7 +180,7 @@ async function generateAnalysisFromAgent(leadId: string): Promise<string> {
 
     return content;
   } catch {
-    return buildLocalSummary(conversation);
+    return buildLocalSummary();
   }
 }
 

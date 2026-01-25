@@ -2,9 +2,18 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 import dayjs from "dayjs";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function readEnv(value: unknown) {
+  const raw = value !== null && value !== undefined ? String(value).trim() : "";
+  if (!raw) {
+    return "";
+  }
+  return raw.replace(/^['"`]/, "").replace(/['"`]$/, "").trim();
+}
+
+const supabaseUrl = readEnv(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const supabaseKey = readEnv(
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY
+);
 
 const supabase = createClient(supabaseUrl, supabaseKey || "");
 
@@ -99,6 +108,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<DashboardResponse | { error: string }>
 ) {
+  res.setHeader("Cache-Control", "no-store");
   const expectedToken = process.env.CRM_API_TOKEN;
   const headerToken = req.headers["x-crm-token"];
   const token = Array.isArray(headerToken) ? headerToken[0] : headerToken;
@@ -235,7 +245,6 @@ export default async function handler(
     const statusNew = ["新建"];
     const statusInProgress = ["跟进中"];
     const statusWon = ["已转化"];
-    const statusLost = ["丢单"];
 
     let leadsNeed = 0;
     let leadsProposal = 0;
@@ -436,7 +445,7 @@ export default async function handler(
     };
 
     res.status(200).json(response);
-  } catch (e) {
+  } catch {
     res.status(500).json({ error: "Dashboard统计失败" });
   }
 }

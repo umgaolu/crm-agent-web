@@ -1,4 +1,6 @@
-const nextConfig = {
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants.js";
+
+const baseConfig = {
   transpilePackages: [
     "antd",
     "@ant-design/icons",
@@ -12,4 +14,15 @@ const nextConfig = {
   ]
 };
 
-export default nextConfig;
+export default function nextConfig(phase) {
+  if (phase === PHASE_DEVELOPMENT_SERVER) {
+    return {
+      ...baseConfig,
+      distDir: ".next-dev"
+    };
+  }
+  return {
+    ...baseConfig,
+    distDir: ".next"
+  };
+}
